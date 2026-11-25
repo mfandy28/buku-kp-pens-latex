@@ -1,0 +1,140 @@
+%============================================================
+% RUNNER: BUKU KERJA PRAKTIK
+% Compile: make buku
+%
+% Struktur halaman (prelim = romawi, mengikuti Pasal 4.2.1):
+%  i    Sampul (nomor tidak ditampilkan)
+%  ii   Halaman kosong
+%  iii  Halaman Judul Dalam (tanpa nomor, Pasal 4.2.2 4b)
+%  iv   Halaman kosong
+%  v    Lembar Pengesahan Internal / PENS (tanpa nomor)
+%  vi   Halaman kosong
+%  vii  Lembar Pengesahan Instansi / Perusahaan (tanpa nomor)
+%  viii Halaman kosong
+%  ix   Abstrak (nomor mulai tampil)
+%  ...  Daftar Isi, Kata Pengantar, Daftar Gambar, Daftar Tabel,
+%       Daftar Lampiran (setiap bagian mulai halaman ganjil)
+%  ---  BAB 1: angka Arab mulai 1
+%============================================================
+
+\documentclass[10pt, a5paper, twoside, openright, fleqn]{report}
+
+\input{config/variables}
+\input{config/toggles}
+
+% -- Opsi (uncomment untuk mengaktifkan) ----------------------
+% \pengesahaninternalpdftrue  % Pakai PDF Lembar Pengesahan Internal bertanda tangan
+%                             % (pages/pengesahan_internal_ttd.pdf)
+% \pengesahaninstansipdftrue  % Pakai PDF Lembar Pengesahan Instansi bertanda tangan & stempel
+%                             % (pages/pengesahan_instansi_ttd.pdf)
+
+\input{config/packages}
+\input{config/fonts}         % ukuran font per peruntukan
+\input{config/formatting}
+\input{formats/format_buku}
+\input{config/migration}
+
+%============================================================
+\begin{document}
+%============================================================
+
+\hypersetup{pageanchor=false}
+
+% -- Halaman i: Cover (romawi i, tanpa header/footer) -----
+% PENTING: kpruler diset GLOBAL sebelum cover.
+% \begin{titlepage} di cover_buku.tex otomatis override dengan \thispagestyle{empty}
+% sehingga cover tidak punya header/footer.
+% Setelah \end{titlepage}, global pagestyle tetap kpruler.
+\pagenumbering{roman}
+\setcounter{page}{1}
+\pagestyle{kpruler}
+\input{formats/cover_buku}
+
+% -- Halaman ii: Blank, dibuat otomatis oleh \cleardoublepage -----
+% (pakai mekanisme yg SAMA persis dgn hal. iv yang sudah terbukti benar)
+\makeatletter\@mainmatterfalse\makeatother
+\cleardoublepage
+
+% -- Halaman iii: Halaman Judul Dalam (romawi iii, tanpa header/footer)
+\input{formats/halaman_judul}  % TIDAK ada \newpage lagi di dalam file ini
+
+% -- Halaman iii: Lembar Pengesahan Internal ------------------
+% (halaman ii = blank dengan kpruler)
+\cleardoublepage
+\ifpengesahaninternalpdf
+  \includepdf[pages=-]{\FilePengesahanInternalPDF}
+\else
+  \input{formats/pengesahan_internal}
+\fi
+
+% -- Halaman vii: Lembar Pengesahan Instansi ------------------
+% (halaman vi = blank)
+\cleardoublepage
+\ifpengesahaninstansipdf
+  \includepdf[pages=-]{\FilePengesahanInstansiPDF}
+\else
+  \input{formats/pengesahan_instansi}
+\fi
+
+% -- Halaman ix: Abstrak ---------------------------------------
+% (halaman viii = blank)
+\cleardoublepage
+\makeatletter\@mainmattertrue\makeatother
+\input{pages/abstrak}
+
+% -- Urutan Pasal 4.2.1: Daftar Isi, Kata Pengantar, Daftar ---
+% -- Gambar, Daftar Tabel, Daftar Lampiran ---------------------
+\cleardoublepage
+\phantomsection
+\addcontentsline{toc}{chapter}{DAFTAR ISI}
+\tableofcontents
+
+\cleardoublepage
+\input{pages/kata_pengantar}
+
+\cleardoublepage
+\phantomsection
+\addcontentsline{toc}{chapter}{DAFTAR GAMBAR}
+\begingroup
+\renewcommand*{\addvspace}[1]{}
+\listoffigures
+\endgroup
+
+\cleardoublepage
+\phantomsection
+\addcontentsline{toc}{chapter}{DAFTAR TABEL}
+\begingroup
+\renewcommand*{\addvspace}[1]{}
+\listoftables
+\endgroup
+
+\input{pages/daftar_lampiran}
+
+% -- Bab 1+: Arabic dari 1, pageanchor aktif ------------------
+\cleardoublepage
+\pagenumbering{arabic}
+\setcounter{page}{1}
+\hypersetup{pageanchor=true}
+\pagestyle{kpruler}
+
+\newcommand{\SistematikaFile}{pages/sistematika_kp}
+\input{chapters/bab1}
+\input{chapters/bab2}
+\input{chapters/bab3}
+\input{chapters/bab4}
+\input{chapters/bab5}
+
+% -- Daftar Pustaka -------------------------------------------
+\cleardoublepage
+\phantomsection
+\addcontentsline{toc}{chapter}{DAFTAR PUSTAKA}
+\renewcommand{\bibname}{DAFTAR PUSTAKA}
+\bibliographystyle{apalike} % urut abjad, nama-tahun (Pasal 4.2.2 no. 7)
+\bibliography{refs/references}
+
+% -- Lampiran -------------------------------------------------
+\input{pages/lampiran}
+
+%============================================================
+\end{document}
+%============================================================

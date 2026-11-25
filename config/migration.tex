@@ -1,0 +1,26 @@
+% Gambar dapat diisi tanpa mengubah caption atau penomoran.
+% Simpan PNG pada path yang tercantum di dalam kotak placeholder.
+\newlength{\TinggiRuangGambar}
+\setlength{\TinggiRuangGambar}{3.2cm}
+\newlength{\BatasTinggiGambar}
+\setlength{\BatasTinggiGambar}{0.58\textheight}
+\newcommand{\RuangDokumentasi}[2]{%
+  \begin{center}
+  \IfFileExists{#1}{%
+    \includegraphics[width=0.95\linewidth,height=\BatasTinggiGambar,keepaspectratio]{#1}%
+  }{%
+    \fbox{\parbox[c][\TinggiRuangGambar][c]{0.88\linewidth}{%
+      \centering\small #2\par\medskip
+      \textit{Ruang gambar}\par\medskip
+      {\scriptsize\ttfamily\detokenize{#1}}}}%
+  }
+  \end{center}
+}
+\newcommand{\GambarLaporan}[4]{%
+  \par\nopagebreak[3]
+  \begin{figure}[H]
+    \RuangDokumentasi{#1}{#2}
+    \caption{#2}\label{#3}
+    \ifblank{#4}{}{{\FontSumber Sumber: #4.\par}}
+  \end{figure}
+}

@@ -1,0 +1,206 @@
+\chapter{PENDAHULUAN}
+% DOCX block 211
+\section{Latar Belakang}
+
+% DOCX block 212
+Personel Maintenance memerlukan informasi kondisi mesin untuk memeriksa peralatan produksi. Catatan pengukuran membantu mereka melihat perubahan kondisi mesin selama digunakan. Sistem embedded, yaitu komputer yang menjalankan tugas tertentu pada alat, dan Industrial Internet of Things (IIoT) dapat digunakan untuk mengumpulkan, menampilkan, dan menyimpan data tersebut.
+
+% DOCX block 213
+Sistem pada mesin cutting memantau suhu motor, arus listrik, tekanan udara, dan laju aliran udara. Sensor dan modul pembacaan mengirim data ke Raspberry Pi untuk diolah. Pengguna dapat melihat hasilnya pada layar di dekat mesin, sedangkan dashboard server menampilkan data beberapa mesin beserta riwayat pengukurannya.
+
+% DOCX block 214
+Kegiatan kerja praktik di Divisi Maintenance PT XYZ mencakup monitoring mesin cutting oleh Muhammad Fandy Anggriawan dan monitoring panel listrik oleh Muhammad Fadhil Abdillah. Pada mesin cutting, Raspberry Pi digunakan untuk membaca perangkat pengukuran melalui RS485 dengan protokol Modbus RTU. Informasi ditampilkan melalui HMI pada Touch Display 7 inci, disertai fungsi alarm, penyimpanan lokal, dan pengiriman data menuju server melalui MQTT.
+
+Sistem panel menggunakan satu Raspberry Pi untuk melayani empat panel yang berdekatan di area Power Room melalui modul MAX3485 pada bus RS485. PM2120 menyediakan data kelistrikan, sedangkan THM30MD menyediakan data suhu dan kelembaban. Raspberry Pi memeriksa batas alarm, menerima kartu melalui RFID reader dengan buzzer dan LED terintegrasi, lalu mengirim data pengukuran ke dashboard panel melalui MQTT. Dalam rancangan perluasan, setiap blok panel dilayani satu node, yaitu satu unit Raspberry Pi beserta perangkat pendukungnya.
+
+% DOCX block 215
+Melalui kedua proyek ini, penulis menerapkan pengukuran, komunikasi industri, dan pemrograman pada pekerjaan pemeliharaan. Laporan menjelaskan kebutuhan pemantauan, pemasangan perangkat, pengembangan aplikasi, dan evaluasi fungsi sistem.
+
+% DOCX block 216
+Proses manufaktur wiring harness mencakup pemotongan kabel, penyambungan atau pemasangan terminal, serta perakitan sesuai konfigurasi produk. Keterkaitan antarproses membuat kesiapan mesin menjadi bagian dari kelancaran produksi. Informasi kondisi operasi mesin dapat digunakan sebagai bahan peninjauan oleh personel yang menangani pemeliharaan.
+
+% DOCX block 217
+Selama kerja praktik, penulis mempelajari cara menghubungkan perangkat ukur, aplikasi pada Raspberry Pi, dan server perusahaan. Pekerjaan ini menerapkan materi elektronika, pemrograman, dan jaringan yang telah dipelajari di perkuliahan.
+
+% DOCX block 218
+\section{Rumusan Masalah}
+
+% DOCX block 219
+Permasalahan yang dibahas dalam laporan kerja praktik ini meliputi:
+
+% DOCX block 220
+\begin{enumerate}[leftmargin=*,itemsep=2pt]
+\item Bagaimana mengimplementasikan pembacaan suhu motor, arus tiga fasa, tekanan udara, dan laju aliran udara pada mesin cutting sesuai konfigurasi masing-masing mesin?
+
+% DOCX block 221
+\item Bagaimana mengintegrasikan perangkat pengukuran dengan Raspberry Pi melalui RS485 dan protokol Modbus RTU?
+
+% DOCX block 222
+\item Bagaimana mengembangkan HMI, alarm, penyimpanan data, dan dashboard server sebagai satu sistem pemantauan?
+
+\item Bagaimana membaca data empat panel melalui satu Raspberry Pi, menampilkannya pada dashboard, dan mengevaluasi fungsi monitoring panel?
+
+% DOCX block 223
+\end{enumerate}
+
+\section{Tujuan dan Manfaat}
+
+% DOCX block 224
+\subsection{Tujuan Umum}
+
+% DOCX block 225
+Tujuan umum pelaksanaan kerja praktik di PT XYZ adalah sebagai berikut.
+
+% DOCX block 226
+\begin{enumerate}[leftmargin=*,itemsep=2pt]
+\item Memenuhi kegiatan pembelajaran kerja praktik pada Program Studi \JenjangProdi\ \NamaProdi\ Politeknik Elektronika Negeri Surabaya.
+
+\item Mengembangkan kemampuan analisis dengan menerapkan pengetahuan perkuliahan pada kebutuhan teknis di industri.
+
+\item Memahami kegiatan manufaktur dan peran pemeliharaan peralatan dalam mendukung proses produksi.
+
+\item Meningkatkan kesiapan profesional melalui penyelesaian tugas, koordinasi, kedisiplinan, dan tanggung jawab di lingkungan perusahaan.
+\end{enumerate}
+
+\subsection{Tujuan Khusus}
+
+% DOCX block 233
+Tujuan khusus kegiatan kerja praktik ini berkaitan dengan pengembangan monitoring mesin cutting dan panel listrik, yaitu sebagai berikut.
+
+% DOCX block 234
+\begin{enumerate}[leftmargin=*,itemsep=2pt]
+\item Memahami kebutuhan pemantauan suhu motor, arus tiga fasa, tekanan udara, dan laju aliran udara pada mesin cutting sesuai konfigurasi masing-masing mesin.
+
+% DOCX block 235
+\item Mengintegrasikan perangkat pengukuran mesin cutting dengan Raspberry Pi melalui satu konverter Waveshare USB--RS485 dengan protokol Modbus RTU.
+
+% DOCX block 236
+\item Mengembangkan HMI pada Touch Display 7 inci untuk menyajikan nilai parameter, grafik, status perangkat, dan peringatan.
+
+% DOCX block 237
+\item Menerapkan penyimpanan histori pada SQLite serta fungsi alarm dan autentikasi RFID untuk mendukung penanganan peringatan.
+
+% DOCX block 238
+\item Mengintegrasikan data monitoring dengan dashboard server melalui komunikasi MQTT agar informasi mesin dapat dipantau secara terpusat.
+
+% DOCX block 239
+\item Mengevaluasi kesesuaian fungsi sistem terhadap kebutuhan implementasi serta menyusun dokumentasi teknis hasil pekerjaan.
+
+\item Mengembangkan monitoring panel melalui pembacaan PM2120 dan THM30MD, evaluasi alarm lokal, RFID Wiegand, serta integrasi dashboard, histori, statistik, dan pengaturan.
+
+% DOCX block 240
+\end{enumerate}
+
+\subsection{Manfaat}
+
+% DOCX block 241
+Pelaksanaan kerja praktik memberikan manfaat bagi mahasiswa, institusi pendidikan, dan perusahaan. Manfaat tersebut diuraikan sebagai berikut.
+
+% DOCX block 242
+\subsubsection{Bagi Mahasiswa}
+
+% DOCX block 243
+\begin{enumerate}[leftmargin=*,itemsep=2pt]
+\item Menerapkan pengetahuan elektronika, pemrograman, dan komunikasi data serta memahami karakteristik perangkat di industri.
+
+\item Mengembangkan kreativitas dan keterampilan analisis, integrasi, pengujian, serta dokumentasi sistem sesuai kebutuhan pengguna.
+
+\item Memperoleh pengalaman menyesuaikan perbedaan konfigurasi perangkat dan menelusuri permasalahan teknis secara terstruktur.
+
+\item Melatih komunikasi, kerja sama, serta tanggung jawab terhadap mutu dan waktu bersama pembimbing dan personel perusahaan.
+
+\item Memahami kegiatan manufaktur dan peran Divisi Maintenance.
+\end{enumerate}
+
+\subsubsection{Bagi Politeknik Elektronika Negeri Surabaya}
+
+% DOCX block 252
+\begin{enumerate}[leftmargin=*,itemsep=2pt]
+\item Mendukung hubungan kerja sama antara institusi pendidikan dan perusahaan dalam pelaksanaan pembelajaran terapan.
+
+% DOCX block 253
+\item Memberikan gambaran mengenai penerapan kompetensi elektronika, sistem embedded, dan jaringan pada kebutuhan industri.
+
+% DOCX block 254
+\item Menjadi bahan masukan untuk evaluasi pembelajaran serta pengembangan kemampuan lulusan yang sesuai kebutuhan pekerjaan.
+
+% DOCX block 255
+\end{enumerate}
+
+\subsubsection{Bagi PT XYZ}
+
+% DOCX block 256
+\begin{enumerate}[leftmargin=*,itemsep=2pt]
+\item Mendukung kerja sama dengan Politeknik Elektronika Negeri Surabaya dalam pengembangan kompetensi mahasiswa.
+
+\item Menyediakan bahan evaluasi kompetensi mahasiswa pada tugas pemeliharaan dan pengembangan sistem.
+
+\item Mendukung pertukaran pengetahuan dan diskusi mengenai teknologi pemantauan, pengelolaan data, serta kebutuhan lapangan.
+
+\item Memperoleh hasil pengembangan sistem monitoring dan dokumentasi yang mendukung pemantauan parameter mesin cutting dan panel listrik.
+\end{enumerate}
+
+\section{Ruang Lingkup Pembahasan}
+
+% DOCX block 263
+\subsection{Batasan Pembahasan}
+
+% DOCX block 264
+Batasan pembahasan ditetapkan agar uraian laporan terpusat pada pekerjaan yang dikembangkan. Lingkup tersebut mencakup hal-hal berikut.
+
+% DOCX block 265
+\begin{enumerate}[leftmargin=*,itemsep=2pt]
+\item Objek pembahasan adalah monitoring mesin cutting dan panel listrik pada Divisi Maintenance PT XYZ. Pembahasan cutting mengikuti konfigurasi masing-masing mesin; implementasi panel mencakup satu Raspberry Pi untuk empat panel di Power Room, dengan rancangan perluasan per blok.
+
+% DOCX block 266
+\item Parameter mesin cutting mencakup suhu motor, arus tiga fasa, tekanan udara, dan laju aliran udara. Pembacaan data menggunakan perangkat pengukuran, konverter RTD--RS485, dan modul masukan analog Waveshare.
+
+% DOCX block 267
+\item Pada mesin cutting, unit pemrosesan utama menggunakan Raspberry Pi. Antarmuka lokal menggunakan Touch Display 7 inci melalui DSI, sedangkan aplikasi HMI dikembangkan menggunakan Python dan PyQt5.
+
+% DOCX block 268
+\item Komunikasi akuisisi menggunakan RS485/Modbus RTU, sedangkan integrasi data menuju dashboard server menggunakan MQTT. Penyimpanan lokal, histori, alarm, dan autentikasi RFID dibahas sebagai bagian fungsi pendukung sistem.
+
+\item Monitoring panel menggunakan PM2120 dan THM30MD melalui modul MAX3485 pada bus RS485, alarm pada node, RFID Wiegand dengan buzzer dan LED terintegrasi, serta dashboard Django. Penerapannya mencakup satu node untuk empat panel di Power Room. Dashboard cutting dan panel dijalankan sebagai aplikasi yang terpisah.
+
+% DOCX block 269
+\item Evaluasi dibatasi pada penerapan arsitektur, alur pembacaan, penyajian data, penyimpanan, dan penanganan peringatan. Pengukuran akurasi sensor, latensi komunikasi, dan keandalan jangka panjang berada di luar cakupan evaluasi laporan.
+
+% DOCX block 270
+\end{enumerate}
+
+Nama perusahaan disamarkan menjadi PT XYZ. Penyajian identitas, dokumentasi, dan informasi teknis mengikuti ketentuan publikasi perusahaan.
+
+% DOCX block 271
+\subsection{Metode Wawancara dan Diskusi}
+
+% DOCX block 272
+Wawancara dan diskusi digunakan untuk memperjelas kebutuhan pengguna. Pembahasannya meliputi parameter yang dipantau, tampilan HMI, cara memberi peringatan, dan pengiriman data ke dashboard server.
+
+% DOCX block 273
+Pembimbing lapangan menjadi pihak yang memberikan arahan serta penilaian terhadap hasil pekerjaan. Masukan teknis menjadi dasar penyesuaian implementasi, sedangkan penerimaan hasil akhir menunjukkan kesesuaian lingkup pekerjaan dengan kebutuhan yang ditetapkan.
+
+% DOCX block 274
+\subsection{Metode Observasi}
+
+% DOCX block 275
+Observasi dilakukan dengan meninjau mesin cutting dan perangkat pengukurannya. Hal yang diperhatikan meliputi parameter yang dibaca, jenis sinyal sensor, pembagian kanal, sambungan komunikasi, dan penempatan HMI di dekat mesin.
+
+% DOCX block 276
+Pembahasan hasil observasi diarahkan pada kebutuhan integrasi sistem. Perbedaan konfigurasi mesin cutting diperhatikan agar pembacaan serta tampilan parameter sesuai perangkat yang digunakan. Informasi tersebut menjadi dasar pengembangan arsitektur monitoring yang dijelaskan pada Bab IV.
+
+% DOCX block 277
+\subsection{Metode Literatur}
+
+% DOCX block 278
+Studi literatur mencakup dokumentasi perangkat dan perangkat lunak yang berkaitan dengan akuisisi, pengolahan, penyimpanan, dan komunikasi data. Spesifikasi Modbus digunakan untuk memahami pertukaran data perangkat \citep{modbus2012}, sedangkan dokumentasi Raspberry Pi dan Touch Display mendukung penjelasan unit pemrosesan serta antarmuka fisik \citep{raspberrypi}, \citep{touchdisplay}.
+
+% DOCX block 279
+Dokumentasi PyQt, SQLite, MQTT, Django, dan modul masukan analog melengkapi penjelasan fungsi antarmuka, basis data, komunikasi, aplikasi server, serta akuisisi sinyal \citep{pyqt,sqlite,mqtt2014,django,waveshare}. Uraian implementasi spesifik mengacu pada program HMI cutting, aplikasi Raspberry Pi panel, serta dashboard masing-masing. Dokumentasi PM2100 digunakan untuk membedakan kemampuan meter dari fungsi yang dibaca program \citep{schneiderpm2100}.
+
+\subsection{Metode Analisis Program dan Implementasi}
+
+Analisis program digunakan untuk menjelaskan konfigurasi, pembacaan register, pengolahan alarm, penanganan RFID, komunikasi MQTT, basis data, API, dan tampilan dashboard. Pembahasan membedakan fungsi yang dibentuk oleh program dari kondisi penerapannya pada perangkat. Implementasi panel menggunakan satu Raspberry Pi untuk empat panel di Power Room melalui modul MAX3485 pada bus RS485. Evaluasi diarahkan pada hubungan antara kebutuhan monitoring, alur program, dan penerapan sistem.
+
+\section{Sistematika Penulisan}
+\input{pages/sistematika_kp}

@@ -1,0 +1,50 @@
+%============================================================
+% LEMBAR PENGESAHAN INSTANSI/PERUSAHAAN
+% Ditandatangani: Pembimbing Lapangan dari perusahaan
+%============================================================
+\newpage
+
+\begin{center}
+  {\FontPengesahanJudul\bfseries LEMBAR PENGESAHAN\par}
+  \vspace{0.3cm}
+  {\FontPengesahanJudul\bfseries LAPORAN KERJA PRAKTIK\par}
+  {\FontPengesahanJudul\bfseries \MakeUppercase{\NamaPerusahaan}\par}
+  {\FontPengesahanJudul Periode \PeriodeKP\par}
+  \vspace{1cm}
+
+  {\FontPengesahanIsi Disusun oleh:\par}
+  \vspace{0.1cm}
+
+  \begin{tabular}{@{}p{5.5cm}l@{}}
+    \bfseries\FontPengesahanIsi \NamaMahasiswaSatu & \bfseries\FontPengesahanIsi \NRPSatu \\
+    \ifcsvoid{NamaMahasiswaDua}{}{%
+      \bfseries\FontPengesahanIsi \NamaMahasiswaDua & \bfseries\FontPengesahanIsi \NRPDua \\
+    }
+    \ifcsvoid{NamaMahasiswaTiga}{}{%
+      \bfseries\FontPengesahanIsi \NamaMahasiswaTiga & \bfseries\FontPengesahanIsi \NRPTiga \\
+    }
+  \end{tabular}
+\end{center}
+
+\vspace{1cm}
+
+\begin{center}
+  {\FontPengesahanIsi\bfseries Menyetujui,\par}
+  \vspace{0.3cm}
+
+  {\FontPengesahanIsi \TanggalPengesahan\par}
+\end{center}
+\noindent
+\begin{minipage}[t]{0.46\textwidth}
+  \centering\FontPengesahanIsi
+  Senior Manager\par
+  \vspace{2cm}
+  {\bfseries\NamaSeniorManager\par}
+\end{minipage}\hfill
+\begin{minipage}[t]{0.46\textwidth}
+  \centering\FontPengesahanIsi
+  Pembimbing Lapangan\par
+  \vspace{2cm}
+  {\bfseries\NamaPembimbingLapangan\par}
+\end{minipage}
+\thispagestyle{empty} % tanpa nomor halaman (Pasal 4.2.2 no. 4b)

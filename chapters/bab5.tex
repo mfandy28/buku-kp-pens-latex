@@ -1,0 +1,102 @@
+\begingroup
+% Layout: jarak antartingkat sedikit dipadatkan agar penutup tidak menyisakan dua baris.
+\titlespacing*{\section}{0pt}{8pt}{2pt}
+\titlespacing*{\subsection}{0pt}{6pt}{2pt}
+\titlespacing*{\subsubsection}{0pt}{2pt}{1pt}
+\chapter{PENUTUP}
+% DOCX block 601
+\section{Kesimpulan}
+
+% DOCX block 602
+Berdasarkan pelaksanaan kerja praktik di Divisi Maintenance PT XYZ, diperoleh kesimpulan sebagai berikut.
+
+% DOCX block 603
+\begin{enumerate}[leftmargin=*,itemsep=2pt]
+\item Sistem monitoring mesin cutting telah diimplementasikan dengan Raspberry Pi sebagai unit pemrosesan. Pembacaan suhu motor, arus tiga fasa, tekanan udara, dan laju aliran udara dilakukan melalui RS485/Modbus RTU sesuai konfigurasi perangkat pada masing-masing mesin.
+
+% DOCX block 604
+\item HMI pada Touch Display 7 inci menyajikan nilai dan grafik pengukuran, didukung penyimpanan histori pada SQLite serta fungsi alarm dan autentikasi RFID.
+
+% DOCX block 605
+\item Komunikasi MQTT mengintegrasikan data pada sisi mesin dengan dashboard server berbasis Django untuk pemantauan terpusat dan penelusuran riwayat.
+
+% DOCX block 606
+\item Evaluasi fungsi cutting mencakup pembacaan sensor, penyajian HMI, penyimpanan riwayat, alarm dan RFID, komunikasi MQTT, serta dashboard server. Hasil pekerjaan menghubungkan fungsi-fungsi tersebut dalam satu alur pemantauan mesin.
+
+\item Sistem monitoring panel telah berjalan pada satu Raspberry Pi yang melayani empat panel di Power Room melalui modul MAX3485 pada bus RS485. Program menghubungkan pembacaan PM2120 dan THM30MD, evaluasi alarm pada node, serta RFID Wiegand dengan dashboard panel berbasis Django. Buzzer dan LED terintegrasi pada RFID reader sebagai keluaran peringatan.
+
+\item Sistem cutting dan panel mempunyai aplikasi serta penyimpanan data masing-masing. Penerapan panel menggunakan satu node untuk empat panel, sedangkan perluasan ke beberapa blok mengikuti rancangan beberapa node. Evaluasi menempatkan pengalamatan, kualitas data, penanganan RFID, dan ketahanan pengiriman sebagai pertimbangan pengembangan sistem.
+
+% DOCX block 607
+\end{enumerate}
+
+\section{Saran}
+
+% DOCX block 608
+\subsection{Saran bagi PT XYZ}
+
+% DOCX block 609
+\subsubsection{Pemeliharaan sistem monitoring}
+
+% DOCX block 610
+Perusahaan disarankan melaksanakan pemeriksaan berkala terhadap sensor, sambungan RS485, media penyimpanan, dan fungsi peringatan. Pemeriksaan membantu menjaga ketersediaan informasi yang digunakan dalam pemantauan kondisi mesin.
+
+% DOCX block 611
+\subsubsection{Penguatan dokumentasi teknis}
+
+% DOCX block 612
+Pemetaan kanal, pengaturan sensor, alur jaringan, serta perubahan program perlu diperbarui dalam dokumentasi pemeliharaan. Catatan pengujian kuantitatif dapat dikembangkan untuk mengevaluasi akurasi, waktu pengiriman, dan kontinuitas data selama operasi.
+
+\subsubsection{Penyempurnaan integrasi monitoring panel}
+
+Sebelum sistem diperluas ke blok lain, perintah server perlu dipastikan hanya diterima node yang dituju. Nama parameter pengukuran harus sesuai dengan nama yang diperiksa fungsi alarm. Pemeriksaan kartu RFID pada Raspberry Pi dan server juga perlu disamakan. Setiap kegagalan pembacaan perlu diberi tanda agar nilai pengganti tidak dianggap sebagai hasil ukur. Node perlu dilengkapi antrean data yang tetap tersimpan saat aplikasi berhenti agar data dapat dikirim ulang setelah jaringan pulih. Konfigurasi perangkat terpasang, batas alarm, dan cara membaca faktor daya perlu dicatat serta diuji.
+
+% DOCX block 613
+\subsubsection{Pengembangan kerja sama dengan institusi pendidikan}
+
+% DOCX block 614
+Kerja sama dapat dilanjutkan melalui proyek terapan yang sesuai kebutuhan perusahaan. Pendampingan teknis dan evaluasi hasil membantu mahasiswa menghasilkan pekerjaan yang dapat digunakan serta dipelihara oleh unit terkait.
+
+% DOCX block 615
+\subsection{Saran bagi Politeknik Elektronika Negeri Surabaya}
+
+% DOCX block 616
+\subsubsection{Peningkatan pembekalan sebelum kerja praktik}
+
+% DOCX block 617
+Pembekalan dapat mencakup instrumentasi industri, komunikasi data, keselamatan kerja, dan dokumentasi teknis. Materi tersebut membantu mahasiswa memahami hubungan antara kompetensi perkuliahan dan pelaksanaan pekerjaan di lapangan.
+
+% DOCX block 618
+\subsubsection{Penguatan pembelajaran berbasis proyek}
+
+% DOCX block 619
+Proyek gabungan sensor, komputer, jaringan, dan aplikasi dapat melatih mahasiswa menghubungkan perangkat serta menyelesaikan masalah di lapangan.
+
+% DOCX block 620
+\subsubsection{Fasilitasi dokumentasi dan penyampaian hasil}
+
+% DOCX block 621
+Institusi diharapkan mendukung penyusunan laporan dan penyampaian hasil kerja praktik. Kegiatan ini perlu memperhatikan kerahasiaan informasi perusahaan serta memusatkan pembahasan pada proses dan capaian yang dapat dipertanggungjawabkan.
+
+% DOCX block 622
+\subsection{Saran bagi Mahasiswa}
+
+% DOCX block 623
+\subsubsection{Aktif beradaptasi dan mempelajari proses kerja}
+
+% DOCX block 624
+Mahasiswa disarankan memahami hubungan antara tugas yang diberikan dengan kebutuhan unit kerja. Komunikasi dengan pembimbing dan personel terkait membantu memperjelas batas pekerjaan serta ketentuan yang harus diikuti.
+
+% DOCX block 625
+\subsubsection{Meningkatkan kemandirian dan tanggung jawab}
+
+% DOCX block 626
+Pekerjaan perlu disertai perencanaan, pencatatan perubahan, dan pemeriksaan hasil. Mahasiswa bertanggung jawab menyampaikan kondisi sistem serta keterbatasan pengujian secara jujur.
+
+% DOCX block 627
+\subsubsection{Menjaga komunikasi dan dokumentasi}
+
+% DOCX block 628
+Perkembangan pekerjaan sebaiknya dicatat sejak awal dan dikonsultasikan secara berkala. Dokumentasi yang tertib memudahkan evaluasi, penyusunan laporan, serta penyerahan hasil kepada pihak perusahaan.
+
+\endgroup

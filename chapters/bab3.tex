@@ -1,0 +1,167 @@
+\chapter{LANDASAN TEORI}
+
+Landasan teori pada bab ini menjelaskan hubungan antara pengukuran parameter
+mesin, komunikasi perangkat, antarmuka lokal, penyimpanan data, dan pemantauan
+terpusat. Pembahasan mencakup teknologi monitoring mesin cutting dan panel listrik. Konfigurasi serta hasil penerapannya dibahas pada Bab IV.
+
+\section{Sistem Monitoring Mesin dan IIoT}
+
+Sistem monitoring menghubungkan pengukuran kondisi mesin dengan penyajian
+informasi kepada pengguna. Pada mesin cutting, parameter yang menjadi perhatian
+meliputi suhu motor, arus tiga fasa, tekanan udara, dan laju aliran udara.
+Informasi tersebut memiliki fungsi yang berbeda: suhu dan arus menggambarkan
+parameter operasi motor, sedangkan tekanan dan aliran berkaitan dengan penggunaan
+udara pada mesin. Interpretasi kondisi mesin tetap memerlukan konteks operasi
+dan batas yang ditetapkan untuk setiap parameter.
+
+Dalam Industrial Internet of Things (IIoT), data perangkat lapangan dihubungkan
+dengan aplikasi pemantauan terpusat. HMI menyediakan informasi di dekat mesin,
+sedangkan server menghimpun data beberapa mesin dan menyediakan histori.
+
+\section{Sensor dan Akuisisi Parameter Mesin}
+
+\subsection{Pengukuran Suhu Motor}
+
+Pada sistem monitoring, PT100 dihubungkan dengan konverter RTD--RS485. Konverter mengubah hasil pembacaan sensor menjadi data suhu dan menyediakannya pada register, yaitu tempat data perangkat disimpan untuk dibaca melalui komunikasi. Aplikasi membaca register tersebut, lalu menyesuaikan skalanya agar suhu ditampilkan dalam satuan yang benar.
+
+
+
+
+
+
+\subsection{Pengukuran Arus, Tekanan, dan Aliran Udara}
+
+Transduser arus yang digunakan memiliki dua jenis keluaran, yaitu arus DC
+4--20 mA dan tegangan DC 0--5 V. Kedua jenis sinyal dibaca melalui kanal
+Waveshare yang disesuaikan dengan jenis keluaran masing-masing transduser.
+Sensor tekanan ISE30A-01-D menyediakan keluaran arus DC 4--20 mA untuk
+tekanan 0--1 MPa, sedangkan sensor aliran PFMB7202-06-C menyediakan keluaran
+tegangan 1--5 VDC dengan rentang ukur nominal 20--2000 L/min
+\citep{smcise30a,smcpfmb}. Sinyal tersebut diterima modul masukan Waveshare. Kanal masukan, jenis sinyal, dan rentang
+konversi harus berpasangan dengan sensor yang terhubung. Modul masukan analog
+menjembatani pengukuran tersebut dengan pembacaan melalui Modbus RTU
+\citep{waveshare}. Pada sistem ini, identitas kanal juga membedakan arus fasa R,
+S, dan T serta parameter udara.
+
+Laju aliran udara menyatakan besaran aliran per satuan waktu. Ringkasan nilai
+tertinggi atau terendah positif selama satu siklus tetap merupakan laju aliran.
+Besaran tersebut tidak dapat langsung dinyatakan sebagai volume udara yang
+digunakan dalam satu siklus. Pemisahan ini digunakan pada ringkasan aliran mesin cutting.
+
+\subsection{Konversi Sinyal ke Satuan Teknik}
+
+Sinyal masukan perlu diubah menjadi nilai suhu, arus, tekanan, atau aliran udara sebelum ditampilkan. Konversi linier menghubungkan batas bawah dan atas sinyal dengan batas besaran yang diukur. Faktor pengali dan offset, yaitu nilai koreksi yang ditambahkan, mengikuti konfigurasi sensor. Rumusnya dijelaskan pada Persamaan~\ref{eq:konversi}. Ketepatan hasil konversi tetap harus diperiksa dengan alat pembanding dan catatan pengukuran.
+
+
+
+
+
+
+
+\section{RS485 dan Modbus RTU}
+
+Pada rancangan cutting, koneksi USB--RS485 menghubungkan Raspberry Pi dengan
+perangkat pengukuran, sedangkan Modbus RTU digunakan untuk pertukaran data
+register. Alamat perangkat dan pemetaan register menentukan sumber serta jenis
+data yang dibaca. Konfigurasi komunikasi harus sesuai pada kedua ujung koneksi.
+Dokumentasi protokol Modbus menjadi rujukan pertukaran data perangkat
+\citep{modbus2012}.
+
+Sistem cutting menggunakan satu konverter Waveshare USB--RS485 sebagai antarmuka
+komunikasi Raspberry Pi dengan perangkat pada jalur RS485. Pembacaan konverter
+RTD dan modul masukan analog dibedakan melalui alamat perangkat Modbus,
+sedangkan pemetaan register menentukan data yang diminta pada setiap transaksi. Data yang gagal diperoleh juga perlu
+dibedakan dari hasil pengukuran bernilai nol; kedua keadaan memiliki makna
+yang berbeda dalam tampilan, penyimpanan, dan evaluasi alarm.
+
+Pada sistem panel, UART Raspberry Pi dihubungkan ke bus RS485 melalui modul MAX3485. Modul ini merupakan transceiver, yaitu pengirim dan penerima sinyal RS485 \citep{max3485}. UART menyediakan aliran data serial, MAX3485 menangani sinyal komunikasi pada bus, dan Modbus RTU mengatur pertukaran pesan dengan perangkat ukur.
+
+\section{Raspberry Pi dan HMI}
+
+Raspberry Pi berperan sebagai unit komputasi pada sisi mesin atau blok panel. Dalam proyek
+monitoring, perangkat ini menjalankan akuisisi, pengolahan, penyimpanan,
+antarmuka pengguna, dan proses pengiriman data. Dokumentasi Raspberry Pi dan
+Touch Display menjadi acuan perangkat komputasi serta antarmuka tampilan
+\citep{raspberrypi,touchdisplay}.
+
+Human--Machine Interface (HMI) merupakan antarmuka interaksi pengguna dengan
+sistem. Istilah HMI pada laporan ini merujuk pada aplikasi yang berjalan
+di Raspberry Pi dan ditampilkan pada Touch Display 7 inci. Dengan demikian,
+perangkat layar merupakan media fisik, sedangkan fungsi HMI meliputi penyajian
+nilai, grafik, status perangkat, pengaturan, dan peringatan.
+
+PyQt digunakan untuk membuat antarmuka aplikasi dengan bahasa Python \citep{pyqt}. Pembacaan sensor, penyimpanan riwayat, dan pengiriman data dibagi ke dalam modul yang berbeda agar fungsi masing-masing lebih mudah diperiksa.
+
+
+
+\section{Penyimpanan dan Histori Data}
+
+Pada sistem cutting, SQLite digunakan sebagai basis data lokal pada sisi mesin \citep{sqlite}.
+Pencatatan data melengkapi pemantauan nilai terkini dengan kemampuan meninjau
+riwayat pengukuran. Identitas mesin, waktu pembacaan, kualitas data, dan status
+sinkronisasi diperlukan agar setiap rekaman dapat dipahami sesuai konteksnya.
+
+Pada HMI, nilai kartu berasal dari pembacaan
+terbaru, sedangkan histori berkala menyimpan rata-rata sampel pada jendela
+waktu tertentu. Sampel yang tidak tersedia dikecualikan dari perhitungan.
+Selain histori berkala, ringkasan siklus aliran disimpan dengan karakteristiknya
+sendiri. Pemisahan tersebut mencegah penyamaan data sesaat, rata-rata, dan
+ringkasan siklus.
+
+\section{MQTT dan Sinkronisasi Data}
+
+MQTT mengirim pesan dengan pola publish--subscribe \citep{mqtt2014}. Pengirim atau publisher menerbitkan pesan pada topik tertentu. Broker menerima pesan dan meneruskannya kepada aplikasi yang berlangganan topik tersebut. Pada sistem ini, pesan berisi data pengukuran, identitas mesin, dan waktu pembacaan agar server menyimpannya sebagai rekaman yang tepat.
+
+
+
+
+
+Konfirmasi penerimaan oleh broker dibedakan dari konfirmasi pemrosesan pada
+aplikasi server. Pada sistem cutting, konfirmasi aplikasi (ACK) digunakan untuk
+menentukan apakah rekaman sudah diterima dan disimpan, dikenali sebagai
+duplikat, atau ditolak. Rekaman yang belum terkonfirmasi tetap berada dalam
+antrean pengiriman. Dengan demikian, status sinkronisasi mengacu pada hasil
+pemrosesan aplikasi, bukan sekadar keberhasilan mengirim pesan.
+
+\section{Dashboard Server}
+
+Dashboard menyajikan data beberapa mesin melalui aplikasi web. Django digunakan
+sebagai kerangka aplikasi server \citep{django}. Pada proyek ini, penerimaan
+telemetri dan penyajian halaman memiliki peran terpisah. Proses penerima
+memvalidasi serta menyimpan pesan, sedangkan aplikasi web membaca basis data
+untuk menyediakan pemantauan, histori, alarm, dan fasilitas unduh.
+
+Dashboard perlu membedakan status koneksi, waktu pengukuran, dan usia data. Data yang baru diterima server mungkin berasal dari antrean lama. Karena itu, waktu penerimaan saja belum cukup untuk menunjukkan apakah data masih baru.
+
+
+
+
+\section{Alarm, RFID, dan Evaluasi Fungsional}
+
+Alarm membandingkan hasil pembacaan dengan batas parameter yang telah
+ditetapkan. Rancangan aplikasi cutting menggunakan hitungan sampel berturut-turut untuk
+memicu peringatan. RFID menyediakan identitas teknisi bagi fungsi penanganan
+peringatan, sedangkan relay menghubungkan keluaran kendali dengan buzzer
+24 VDC. Riwayat alarm dan aktivitas penanganan disimpan untuk penelusuran.
+
+Pengujian fungsi memeriksa apakah pembacaan, tampilan, penyimpanan, alarm, dan pengiriman data berjalan sesuai tujuannya. Pengukuran akurasi, latensi, dan keandalan jangka panjang menggunakan metode serta data terukur yang berbeda dari evaluasi fungsi. Bab IV membahas evaluasi sesuai lingkup pekerjaan monitoring.
+
+
+
+\section{Monitoring Panel Listrik dan Pengolahan pada Node}
+
+\subsection{Besaran Kelistrikan, Energi, dan Kondisi Panel}
+
+Pemantauan panel membedakan tegangan antar-fasa dan fasa--netral, arus, frekuensi, daya aktif, faktor daya, serta energi. Daya aktif menyatakan laju penggunaan energi, sedangkan energi menyatakan akumulasi selama suatu periode. Meter PM2120 menyediakan parameter kelistrikan melalui komunikasi serial; pemilihan data yang dibaca mengikuti kebutuhan aplikasi dan konfigurasi meter \citep{schneiderpm2100}. Suhu serta kelembaban merupakan besaran lingkungan yang diperoleh dari sensor terpisah.
+
+Nilai energi pada meter yang terus bertambah dibedakan dari konsumsi selama satu bulan. Perhitungan selisih memerlukan acuan awal dan kontinuitas rekaman. Faktor daya juga memerlukan interpretasi besar serta arah sesuai representasi perangkat; tanda atau pengkodean pada suatu aplikasi tidak dapat langsung diberlakukan pada semua meter.
+
+\subsection{Alamat Perangkat dan Identitas Panel}
+
+Slave ID adalah alamat untuk memilih perangkat Modbus pada satu bus RS485. Alamat ini berbeda dari identitas panel karena satu panel dapat mempunyai beberapa perangkat ukur. Identitas node menunjukkan Raspberry Pi yang mengumpulkan data, sedangkan identitas panel menunjukkan panel yang dipantau. Pembagian ini digunakan ketika satu Raspberry Pi melayani beberapa panel atau sistem diperluas ke beberapa node.
+
+\subsection{Evaluasi Alarm dan Penanganan pada Sisi Perangkat}
+
+Raspberry Pi membandingkan hasil pengukuran dengan batas alarm dan mengendalikan peringatan di dekat panel. Proses ini dapat berjalan tanpa menunggu keputusan baru dari server selama konfigurasi dan data tersedia. Alarm mengikuti jadwal pembacaan sensor. Penyimpanan untuk pengiriman ulang saat jaringan terputus merupakan fungsi tersendiri yang memerlukan pencatatan data dan antrean pada node.
+
+Pembaca RFID Wiegand pada monitoring panel mengirim identitas kartu melalui pulsa pada jalur D0 dan D1. Buzzer dan LED terintegrasi pada reader sebagai keluaran peringatan suara dan visual. Program menyusun pulsa menjadi data kartu, memeriksa identitasnya, lalu menentukan tindakan penanganan alarm. Acknowledgement adalah konfirmasi bahwa peringatan telah ditangani; tindakan ini tidak berarti kondisi pengukuran sudah kembali normal. Keputusan pada Raspberry Pi dan server perlu sesuai agar hak petugas dan catatan alarm tetap benar.

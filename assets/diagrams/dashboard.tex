@@ -1,0 +1,17 @@
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[
+  box/.style={draw,rounded corners=1mm,align=center,font=\scriptsize,
+    text width=24mm,minimum height=15mm,inner sep=2mm},
+  link/.style={->,thick}
+]
+\node[box] (pi) at (0,0) {Mesin cutting\\Raspberry Pi\\HMI dan data lokal};
+\node[box] (pc) at (3.25,0) {PC mesin cutting\\Broker lokal\\Sinkronisasi data};
+\node[box] (server) at (6.5,0) {Server perusahaan\\Dashboard global\\Histori dan alarm};
+\draw[link] (pi) -- (pc);
+\draw[link] (pc) -- (server);
+\end{tikzpicture}
+\caption{Blok diagram dashboard global}
+\label{fig:draft-3-12}
+
+\end{figure}
