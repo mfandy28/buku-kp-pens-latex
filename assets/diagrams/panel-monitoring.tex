@@ -3,34 +3,61 @@
 \begin{figure}[tbp]
 \centering
 \begin{tikzpicture}[
- font=\rmfamily\fontsize{8}{9.5}\selectfont,
+ font=\rmfamily\fontsize{7.5}{9}\selectfont,
  box/.style={draw=blue!45!black,rounded corners=2pt,align=center,
- fill=blue!3,inner sep=4pt,text width=2.55cm},
+ fill=blue!3,inner sep=3.5pt,text width=2.55cm},
+ pbox/.style={draw=blue!45!black,rounded corners=1.5pt,align=center,
+ fill=white,inner sep=2pt,text width=1.22cm,
+ font=\rmfamily\fontsize{6.2}{7.3}\selectfont},
+ nodeone/.style={draw=blue!45!black,rounded corners=2pt,fill=blue!4},
+ nodedashed/.style={draw=blue!45!black,dashed,rounded corners=2pt,fill=gray!6},
  link/.style={->,thick,draw=blue!45!black}]
-\node[box,fill=blue!65!black,text=white] at (-3.15,0)
- {\textbf{Node 1}\\Power Room\\4 panel terpasang};
-\node[box,dashed,fill=gray!8] at (0,0)
- {\textbf{Node 2}\\Rancangan blok berikutnya};
-\node[box,dashed,fill=gray!8] at (3.15,0)
- {\textbf{Node N}\\Rancangan perluasan};
-\foreach \x/\name in {-3.15/a,0/b,3.15/c}{
- \node[box] (meter\name) at (\x,-1.8)
-  {\textbf{Perangkat tiap panel}\\PM2120 dan THM30MD};
- \node[box] (pi\name) at (\x,-3.6)
+
+% -- Area 3 Node (masing-masing 4 panel: 4 PM2120 & 4 THM30MD) --
+\foreach \x/\name/\hdr/\sub/\nstyle in {
+ -3.45/a/{Node 1}/{Power Room (4 panel)}/nodeone,
+  0.00/b/{Node 2}/{Rancangan blok berikut}/nodedashed,
+  3.45/c/{Node N}/{Rancangan perluasan}/nodedashed}{
+ \draw[\nstyle] (\x-1.50,0.38) rectangle (\x+1.50,-2.52);
+ \ifnum\pdfstrcmp{\name}{a}=0
+  \fill[blue!65!black] (\x-1.49,0.37) rectangle (\x+1.49,-0.32);
+  \node[text=white,align=center,inner sep=1.5pt,text width=2.84cm,
+   font=\rmfamily\fontsize{7.5}{8.8}\selectfont] at (\x,0.03)
+   {\textbf{\hdr}\\\sub};
+ \else
+  \fill[gray!15] (\x-1.49,0.37) rectangle (\x+1.49,-0.32);
+  \draw[blue!45!black,dashed] (\x-1.50,-0.32) -- (\x+1.50,-0.32);
+  \node[align=center,inner sep=1.5pt,text width=2.84cm,
+   font=\rmfamily\fontsize{7.5}{8.8}\selectfont] at (\x,0.03)
+   {\textbf{\hdr}\\\sub};
+ \fi
+ \node[pbox] at (\x-0.72,-0.88) {\textbf{Panel 1}\\PM2120\\THM30MD};
+ \node[pbox] at (\x+0.72,-0.88) {\textbf{Panel 2}\\PM2120\\THM30MD};
+ \node[pbox] at (\x-0.72,-1.92) {\textbf{Panel 3}\\PM2120\\THM30MD};
+ \node[pbox] at (\x+0.72,-1.92) {\textbf{Panel 4}\\PM2120\\THM30MD};
+
+ \node[box] (pi\name) at (\x,-3.72)
   {\textbf{Raspberry Pi}\\XY-017 (MAX3485)\\Akuisisi dan alarm};
- \draw[link] (meter\name) -- node[right,font=\rmfamily\fontsize{7}{8}\selectfont]
+ \draw[link] (\x,-2.52) -- node[right,font=\rmfamily\fontsize{6.8}{8}\selectfont]
   {RS485} (pi\name);
- \node[box] (alarm\name) at (\x,-5.25)
+
+ \node[box] (alarm\name) at (\x,-5.32)
   {RFID Wiegand D0/D1\\Buzzer/LED bawaan\\Catu reader 12 V};
  \draw[<->,thick,blue!45!black] (pi\name) -- (alarm\name);
- \draw[thick,blue!45!black] (pi\name.east) -- (\x+1.53,-3.6) -- (\x+1.53,-6.3);
 }
-\draw[thick,blue!45!black] (-1.62,-6.3) -- (4.68,-6.3);
-\node[fill=white,inner sep=2pt] at (0,-6.3) {Ethernet melalui switch};
-\node[box,text width=8.8cm] (broker) at (0,-7.5)
+
+% -- Switch Hub & panah langsung dari setiap Raspberry Pi --
+\node[box,text width=2.8cm] (switch) at (0,-6.92)
+ {\textbf{Switch Hub}};
+\draw[link] (pia.east) -- (-1.93,-3.72) -- (-1.93,-6.92) -- (switch.west);
+\draw[link] (pib.east) -- (1.52,-3.72) -- (1.52,-6.26) -- (0,-6.26) -- (switch.north);
+\draw[link] (pic.east) -- (4.97,-3.72) -- (4.97,-6.92) -- (switch.east);
+
+% -- Broker MQTT & Dashboard Server --
+\node[box,text width=9.0cm] (broker) at (0,-8.02)
  {\textbf{Broker MQTT}\\Menyalurkan telemetri, status node, dan perintah};
-\draw[link] (0,-6.43) -- (broker);
-\node[box,text width=8.8cm] (server) at (0,-8.95)
+\draw[link] (switch.south) -- (broker.north);
+\node[box,text width=9.0cm] (server) at (0,-9.36)
  {\textbf{Dashboard server panel}\\Django, basis data, histori, alarm, statistik, dan ekspor};
 \draw[<->,thick,blue!45!black] (broker) -- (server);
 \end{tikzpicture}

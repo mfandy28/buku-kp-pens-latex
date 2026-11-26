@@ -23,9 +23,9 @@ Berdasarkan pelaksanaan kerja praktik di Divisi Maintenance PT XYZ, diperoleh ke
 % DOCX block 606
 \item Evaluasi fungsi cutting mencakup pembacaan sensor, penyajian HMI, penyimpanan riwayat, alarm dan RFID, komunikasi MQTT, serta dashboard server. Hasil pekerjaan menghubungkan fungsi-fungsi tersebut dalam satu alur pemantauan mesin.
 
-\item Sistem monitoring panel telah berjalan pada satu Raspberry Pi yang melayani empat panel di Power Room melalui modul MAX3485 pada bus RS485. Program menghubungkan pembacaan PM2120 dan THM30MD, evaluasi alarm pada node, serta RFID Wiegand dengan dashboard panel berbasis Django. Buzzer dan LED terintegrasi pada RFID reader sebagai keluaran peringatan.
+\item Sistem monitoring panel sudah dipasang pada satu Raspberry Pi untuk empat panel di Power Room menggunakan modul MAX3485 pada bus RS485. Aplikasi membaca meter PM2120 dan sensor THM30MD, memeriksa batas alarm di node, menerima kartu RFID Wiegand beserta kendali buzzer dan LED bawaan, serta mengirim data ke dashboard Django lewat MQTT.
 
-\item Sistem cutting dan panel mempunyai aplikasi serta penyimpanan data masing-masing. Penerapan panel menggunakan satu node untuk empat panel, sedangkan perluasan ke beberapa blok mengikuti rancangan beberapa node. Evaluasi menempatkan pengalamatan, kualitas data, penanganan RFID, dan ketahanan pengiriman sebagai pertimbangan pengembangan sistem.
+\item Sistem cutting dan panel berjalan pada aplikasi serta basis data terpisah. Untuk perluasan panel ke blok lain, hal yang masih perlu diselaraskan adalah pemisahan topik perintah per node, kesamaan nama variabel alarm ketidakseimbangan tegangan, batas faktor daya, pemeriksaan kartu RFID antara node dan server, serta penambahan antrean data offline di node.
 
 % DOCX block 607
 \end{enumerate}
@@ -49,7 +49,9 @@ Pemetaan kanal, pengaturan sensor, alur jaringan, serta perubahan program perlu 
 
 \subsubsection{Penyempurnaan integrasi monitoring panel}
 
-Sebelum sistem diperluas ke blok lain, perintah server perlu dipastikan hanya diterima node yang dituju. Nama parameter pengukuran harus sesuai dengan nama yang diperiksa fungsi alarm. Pemeriksaan kartu RFID pada Raspberry Pi dan server juga perlu disamakan. Setiap kegagalan pembacaan perlu diberi tanda agar nilai pengganti tidak dianggap sebagai hasil ukur. Node perlu dilengkapi antrean data yang tetap tersimpan saat aplikasi berhenti agar data dapat dikirim ulang setelah jaringan pulih. Konfigurasi perangkat terpasang, batas alarm, dan cara membaca faktor daya perlu dicatat serta diuji.
+Sebelum sistem diperluas ke blok lain, perintah MQTT dari server perlu ditujukan ke masing-masing node agar tidak memicu node lain lewat topik broadcast. Nama data ketidakseimbangan tegangan juga harus disamakan dengan pemeriksaan alarm, begitu pula batas faktor daya dan pengecekan kartu RFID antara node dan server. Kegagalan baca sensor sebaiknya diberi penanda khusus agar tidak tersimpan sebagai nol atau nilai perkiraan. Selain itu, node perlu diberi antrean penyimpanan lokal agar data tidak hilang saat jaringan terputus.
+
+Selain penyempurnaan perangkat lunak tersebut, perusahaan disarankan terus membuka ruang riset dan uji coba terukur terhadap pemilihan perangkat lapangan yang lebih proporsional sesuai beban kerjanya. Untuk tugas yang berfokus pada pembacaan data serial lalu pengiriman ke server, penyesuaian spesifikasi perangkat dengan kebutuhan diharapkan dapat menghasilkan sistem yang lebih hemat, efisien, dan tepat guna tanpa mengabaikan aspek keamanannya.
 
 % DOCX block 613
 \subsubsection{Pengembangan kerja sama dengan institusi pendidikan}

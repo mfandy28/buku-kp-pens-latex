@@ -1098,3 +1098,35 @@ menjelaskan alur power supply 24 V ke step-down XL4015, lalu 12 V untuk
 RFID reader. Uraian skematik diselaraskan agar informasi yang dihapus
 tidak diulang di bagian lain. Ini merupakan pembatasan isi narasi, bukan
 perubahan rangkaian fisik atau klaim bahwa komponen pada skematik dihapus.
+
+## 30. Pembaruan diagram, gambar 4.15--4.20, dan suplai Raspberry Pi dari XL4015 (25 November 2026)
+
+Sumber U28: pengguna memperbarui diagram arsitektur panel (`panel-monitoring.tex`)
+dengan 4 unit PM2120 dan 4 unit THM30MD pada tiap node serta panah langsung dari
+setiap Raspberry Pi menuju Switch Hub, menyisipkan dan menyesuaikan ukuran gambar
+4.15--4.20 (`bab4.tex`), dan menegaskan bahwa suplai Raspberry Pi pada
+monitoring panel berasal dari modul step-down XL4015 (jalur 5 V dari sumber 24 V).
+Subbab 4.1.11.6 dan 4.1.11.7 pada `chapters/bab4.tex` diperbarui agar menyatakan
+jalur 5 V ke Raspberry Pi dan jalur 12 V ke RFID reader dari modul step-down XL4015.
+
+## 31. Konfirmasi pin GPIO UART modul MAX3485 (25 November 2026)
+
+Sumber: `D:\esp32-firmware\rpi_panel_monitor\README.md`, `DEPLOYMENT_GUIDE.md`,
+`config.py`, dan `modbus_reader.py` atas arahan pengguna (U29). Pada header 40-pin
+Raspberry Pi 5 (`/dev/ttyAMA0`), modul MAX3485 terhubung ke Pin 8 (`GPIO 14` / TX)
+dan Pin 10 (`GPIO 15` / RX), dengan catu daya `3,3 V` dari Pin 1 dan `GND` dari
+Pin 6 (`PARITY_NONE` / None parity, 19200 bps, 8N1). Subbab 4.1.12.2 pada
+`chapters/bab4.tex` telah diperbarui dan tanda `[ISI DETAIL]` terkait ditutup.
+
+## 32. Kondisi observasi awal Power Room dan kendala kebijakan IT (25--26 November 2026)
+
+Sumber U30: pengguna menjelaskan kondisi awal di Power Room bahwa kondisi
+abnormal panel baru diketahui saat petugas melakukan patroli, serta kendala
+kebijakan IT perusahaan yang tidak mengizinkan mikrokontroler terhubung
+langsung ke switch hub dan tidak mengizinkan komunikasi perangkat lapangan ke
+server melalui HTTP atau API, sehingga sistem menggunakan Raspberry Pi dan
+protokol MQTT. Atas arahan pengguna pada 26 November 2026 (U31), Subbab 1.4.3
+(`Metode Observasi`) di `chapters/bab1.tex` diringkas agar hanya menjelaskan
+metode observasinya, sedangkan Subbab 1.4.2 (`Metode Wawancara dan Diskusi`)
+ditambahkan keterangan diskusi harian dengan pembimbing lapangan dan
+\textit{monthly report} tiap satu bulan sekali bersama manajer serta divisi terkait.
