@@ -7,13 +7,13 @@ Kerja praktik di Divisi Maintenance PT XYZ berlangsung pada periode 1 Juli sampa
 % ============================================================
 \section{Sistem Monitoring Mesin Cutting}
 
-Sistem monitoring mesin cutting dirancang untuk membaca kondisi operasional mesin di dekat area produksi, menampilkannya pada antarmuka HMI lokal, menyimpan riwayat pengukuran, serta mengirim data ke dashboard server secara terpusat.
+Sistem monitoring mesin cutting dirancang untuk membaca kondisi operasional mesin di dekat area produksi, menampilkannya pada antarmuka HMI, menyimpan riwayat pengukuran, serta mengirim data ke dashboard server secara terpusat.
 
 \subsection{Observasi dan Analisis Kebutuhan Mesin Cutting}
 
 Mesin cutting digunakan pada tahap pengolahan kabel dalam produksi \textit{wiring harness}. Parameter yang perlu dipantau meliputi suhu motor, arus tiga fasa, tekanan udara, dan laju aliran udara sesuai konfigurasi tiap mesin. Operator maupun teknisi membutuhkan informasi nilai terkini di dekat mesin sekaligus catatan riwayat untuk penelusuran gangguan.
 
-Dari hasil pengamatan dan diskusi ketentuan infrastruktur jaringan perusahaan, mikrokontroler tidak diperkenankan terhubung langsung ke \textit{switch hub}, perangkat IoT tidak diizinkan berkomunikasi ke server menggunakan protokol HTTP, dan akuisisi lokal tidak menggunakan Modbus TCP. Selain itu, setiap perangkat ukur memiliki jenis sinyal keluaran berbeda yang harus dikonversi menjadi satuan teknik, dibedakan saat gagal baca dari nilai nol, serta dipisahkan antara data terbaru dan riwayat pengukuran. Oleh karena itu, sistem menggunakan Raspberry Pi sebagai pengolah utama yang membaca perangkat melalui jalur serial Modbus RTU, menyajikan tampilan HMI lokal, menyimpan data di SQLite, mengirimkannya lewat protokol MQTT, dan mengendalikan buzzer alarm serta pembaca RFID untuk penanganan peringatan.
+Dari hasil pengamatan dan diskusi ketentuan infrastruktur jaringan perusahaan, mikrokontroler tidak diperkenankan terhubung langsung ke \textit{switch hub}, perangkat IoT tidak diizinkan berkomunikasi ke server menggunakan protokol HTTP, dan akuisisi lokal tidak menggunakan Modbus TCP. Selain itu, setiap perangkat ukur memiliki jenis sinyal keluaran berbeda yang harus dikonversi menjadi satuan teknik, dibedakan saat gagal baca dari nilai nol, serta dipisahkan antara data terbaru dan riwayat pengukuran. Oleh karena itu, sistem menggunakan Raspberry Pi sebagai pengolah utama yang membaca perangkat melalui jalur serial Modbus RTU, menyajikan tampilan HMI, menyimpan data di SQLite, mengirimkannya lewat protokol MQTT, dan mengendalikan buzzer alarm serta pembaca RFID untuk penanganan peringatan.
 
 Integrasi perangkat disesuaikan dengan karakteristik masing-masing sensor \citep{raspberrypi,waveshare}. Suhu motor dibaca menggunakan sensor PT100 melalui konverter RTD--RS485, sedangkan tiga transduser arus satu fasa, sensor tekanan udara, dan sensor aliran udara dihubungkan ke modul masukan analog Waveshare. Kanal masukan, rentang konversi, alamat perangkat, dan port komunikasi diatur agar program mengenali sumber serta satuan setiap nilai yang dibaca.
 
@@ -23,12 +23,7 @@ Gambar~\ref{fig:draft-3-1} menunjukkan alur pembacaan sensor pada mesin cutting.
 
 Hasil pembacaan ditampilkan pada Touch Display 7 inci melalui antarmuka DSI. Catu daya 24 VDC memasok perangkat pengukuran dan buzzer, sedangkan catu daya 5 VDC digunakan khusus untuk Raspberry Pi. Saat alarm aktif, Raspberry Pi mengendalikan relay melalui GPIO untuk menyambungkan suplai 24 VDC ke buzzer, dan pembaca RFID USB menerima identitas kartu teknisi untuk penanganan peringatan. Ringkasan perangkat keras beserta spesifikasinya tercantum pada Tabel~\ref{tab:draft-3-1}.
 
-\begin{figure}[htbp]
-  \centering
-  \includegraphics[width=\linewidth,keepaspectratio]{assets/gambar/gambar-4-01.png}
-  \caption{Blok diagram sistem monitoring mesin cutting}
-  \label{fig:draft-3-1}
-\end{figure}
+\input{assets/diagrams/monitoring}
 
 \begin{longtblr}[caption={Komponen utama dan fungsi sistem monitoring mesin cutting},label={tab:draft-3-1}]{colspec={Q[0.4,l] X[1.4,l] X[2,l] X[2,l]}, rowhead=1, cells={valign=t}, row{1}={font=\bfseries,bg=gray!15}, colsep=3pt}
 No. & Komponen & Spesifikasi & Fungsi \\
@@ -46,7 +41,7 @@ No. & Komponen & Spesifikasi & Fungsi \\
 \setlength{\BatasTinggiGambar}{3.5cm}
 \captionsetup[figure]{skip=8pt}
 
-\Needspace{6.2cm}
+\Needspace{3cm}
 \subsubsection{Raspberry Pi}
 \label{sec:raspberry-pi}
 
@@ -54,14 +49,14 @@ Pada sistem monitoring mesin cutting, unit pengolah utama menggunakan Raspberry 
 
 \GambarLaporan{assets/gambar/gambar-4-02.png}{Raspberry Pi}{fig:draft-3-2}{}
 
-\Needspace{6.2cm}
+\Needspace{3cm}
 \subsubsection{Touch Display 7 Inci}
 
 Touch Display 7 inci dihubungkan melalui antarmuka DSI dan menjadi media interaksi langsung pengguna dengan HMI. Aplikasi ditampilkan dalam mode layar penuh untuk menyajikan nilai parameter, grafik, status koneksi, dan informasi alarm \citep{touchdisplay}.
 
 \GambarLaporan{assets/gambar/gambar-4-03.png}{Touch Display 7 Inci}{fig:draft-3-3}{}
 
-\Needspace{9cm}
+\Needspace{3cm}
 \subsubsection{Sensor PT100 dan Konverter RTD--RS485}
 
 Sensor PT100 digunakan untuk mengukur suhu motor dengan keluaran berupa perubahan resistansi, bernilai nominal \(100\,\Omega\) pada \(0\,^{\circ}\mathrm{C}\) dan sekitar \(138{,}5\,\Omega\) pada \(100\,^{\circ}\mathrm{C}\) \citep{pt100reference}. Rentang suhu yang tercantum pada label sensor dalam Gambar~\ref{fig:draft-3-4} adalah \(-200\) hingga \(420\,^{\circ}\mathrm{C}\).
@@ -82,7 +77,7 @@ PT100 dihubungkan ke konverter RTD--RS485 (\textit{slave ID} 1) untuk mengubah p
   \caption{Sensor PT100 dan Konverter RTD--RS485}\label{fig:draft-3-4}
 \end{figure}
 
-\Needspace{10cm}
+\Needspace{3cm}
 \subsubsection{Transduser Arus untuk Pengukuran Tiga Fasa}
 
 Setiap transduser arus hanya mengukur satu fasa, sehingga pengukuran tiga fasa memakai tiga unit untuk fasa R, S, dan T. Dalam implementasi digunakan dua jenis keluaran, yaitu arus DC 4--20 mA dan tegangan DC 0--5 V, menyesuaikan ketersediaan perangkat di pasaran. Keduanya dihubungkan ke modul masukan analog Waveshare dengan pengaturan mode kanal yang sesuai.
@@ -91,7 +86,7 @@ Transduser pada Gambar~\ref{fig:draft-3-5} merupakan jenis keluaran 4--20 mA den
 
 \GambarLaporan{assets/gambar/gambar-4-05.jpg}{Transduser Arus Satu Fasa}{fig:draft-3-5}{}
 
-\Needspace{12cm}
+\Needspace{3cm}
 \subsubsection{Sensor Tekanan SMC ISE30A-01-D}
 
 Sensor tekanan SMC ISE30A-01-D mengukur tekanan udara dengan kode keluaran D yang menyediakan satu keluaran sakelar NPN dan keluaran arus analog. Pada rentang 0--1 MPa (0--10 bar), keluarannya 4--20 mA DC (4 mA untuk 0 MPa dan 20 mA untuk 1 MPa), sedangkan rentang nominal \(-0{,}1\) hingga 1 MPa dapat mencapai 2,4 mA pada tekanan negatif \citep{smcise30a}.
@@ -101,11 +96,11 @@ Keluaran arus dihubungkan ke kanal masukan arus Waveshare dan dikonversi memakai
 \par\nopagebreak[3]
 \begin{figure}[H]
   \centering
-  \includegraphics[trim={242bp 219bp 242bp 217bp},clip,width=.78\linewidth,height=4.8cm,keepaspectratio]{assets/gambar/gambar-4-06.png}
+  \includegraphics[trim={242bp 219bp 242bp 217bp},clip,width=.78\linewidth,height=4.0cm,keepaspectratio]{assets/gambar/gambar-4-06.png}
   \caption{Sensor Tekanan SMC ISE30A-01-D}\label{fig:draft-3-6}
 \end{figure}
 
-\Needspace{12cm}
+\Needspace{3cm}
 \subsubsection{Sensor Aliran SMC PFMB7202-06-C}
 
 Sensor aliran SMC PFMB7202-06-C memiliki rentang ukur nominal 20--2000 L/min dengan satu keluaran sakelar NPN dan keluaran tegangan analog 1--5 VDC. Karakteristik tegangannya mengacu pada 1 V untuk 0 L/min dan 5 V untuk 2000 L/min, serta sekitar 1,04 V pada batas ukur nominal 20 L/min \citep{smcpfmb}.
@@ -119,7 +114,7 @@ Keluaran tegangan masuk ke kanal tegangan Waveshare dan dikonversi melalui \(Q=(
   \caption{Sensor Aliran SMC PFMB7202-06-C}\label{fig:draft-3-7}
 \end{figure}
 
-\Needspace{11cm}
+\Needspace{3cm}
 \subsubsection{Waveshare Modbus RTU Analog Input 8CH}
 
 Modul Waveshare Modbus RTU Analog Input 8CH menggunakan \textit{slave ID} 2 dan menerima sinyal arus 4--20 mA DC maupun tegangan 0--5 VDC dan 1--5 VDC \citep{waveshare}. Kanal untuk transduser arus 4--20 mA dan sensor tekanan diatur sebagai masukan arus, sedangkan kanal transduser 0--5 V dan sensor aliran diatur sebagai masukan tegangan. Posisi jumper dan rentang konversi di aplikasi harus selaras dengan sinyal tiap sensor.
@@ -131,14 +126,14 @@ Modul Waveshare Modbus RTU Analog Input 8CH menggunakan \textit{slave ID} 2 dan 
   \caption{Waveshare Modbus RTU Analog Input 8CH}\label{fig:draft-3-8}
 \end{figure}
 
-\Needspace{6.2cm}
+\Needspace{3cm}
 \subsubsection{Konverter Waveshare USB--RS485}
 
 Satu konverter Waveshare USB--RS485 menghubungkan port USB Raspberry Pi ke jalur RS485 yang melayani konverter RTD (\textit{slave ID} 1) dan modul masukan analog Waveshare (\textit{slave ID} 2). Aplikasi memilih perangkat yang dibaca melalui alamat \textit{slave ID} dan nomor register masing-masing.
 
 \GambarLaporan{assets/gambar/gambar-4-09.jpg}{Konverter Waveshare USB--RS485}{fig:draft-3-9}{}
 
-\Needspace{8cm}
+\Needspace{3cm}
 \subsubsection{Catu Daya 5 VDC dan 24 VDC}
 
 Catu daya 5 VDC disediakan khusus untuk Raspberry Pi, sedangkan catu daya 24 VDC memasok perangkat pengukuran, konverter, dan buzzer sesuai susunan sistem.
@@ -157,7 +152,7 @@ Catu daya 5 VDC disediakan khusus untuk Raspberry Pi, sedangkan catu daya 24 VDC
   \caption{Catu Daya 5 VDC dan 24 VDC}\label{fig:draft-3-10}
 \end{figure}
 
-\Needspace{6.2cm}
+\Needspace{3cm}
 \subsubsection{Pembaca RFID, Modul Relay, dan Buzzer 24 VDC}
 
 Pembaca RFID USB menerima identitas kartu teknisi sebagai masukan penanganan peringatan, lalu aplikasi mencocokkan kartu tersebut sebelum mengendalikan buzzer. Modul relay berfungsi sebagai sakelar yang dikendalikan pin GPIO Raspberry Pi untuk menyambungkan atau memutus suplai 24 VDC ke buzzer sesuai polaritas modul. Buzzer 24 VDC menjadi keluaran peringatan suara untuk melengkapi tampilan alarm pada HMI.
@@ -225,9 +220,9 @@ Rekaman ditandai terkirim setelah mendapat status \textit{accepted} atau \textit
 
 \subsection{Pengujian dan Evaluasi Sistem Mesin Cutting}
 
-Evaluasi sistem mesin cutting meninjau kesesuaian fungsi mulai dari pembacaan sensor, tampilan HMI, penyimpanan histori lokal, alarm dan RFID, komunikasi MQTT, hingga dashboard server sesuai dokumentasi pekerjaan yang dirangkum pada Tabel~\ref{tab:draft-3-2}. Pengukuran akurasi metrologi, latensi terukur, dan keandalan jangka panjang berada di luar cakupan laporan. Dokumentasi pemasangan perangkat dan tampilan antarmuka ditunjukkan pada Gambar~\ref{fig:draft-3-13} sampai dengan Gambar~\ref{fig:draft-3-16}.
+Evaluasi sistem mesin cutting meninjau kesesuaian fungsi mulai dari pembacaan sensor, tampilan HMI, penyimpanan histori lokal, alarm dan RFID, komunikasi MQTT, hingga dashboard server sesuai dokumentasi pekerjaan yang dirangkum pada Tabel~\ref{tab:draft-3-2}. Pengukuran akurasi metrologi, latensi terukur, dan keandalan jangka panjang berada di luar cakupan laporan. Kotak kontrol dan isinya ditunjukkan pada Gambar~\ref{fig:draft-3-13}.
 
-\Needspace{8cm}
+\Needspace{4cm}
 \begin{longtblr}[caption={Ringkasan hasil pengujian fungsional monitoring mesin cutting},label={tab:draft-3-2}]{colspec={Q[0.4,l] X[1.4,l] X[2,l] X[2,l]}, rowhead=1, cells={valign=t}, row{1}={font=\bfseries,bg=gray!15}, colsep=3pt}
 No. & Fungsi yang diuji & Kriteria keberhasilan & Hasil yang dilaporkan \\
 1 & Pembacaan sensor & Pembacaan sesuai kanal dan konfigurasi sensor. & Parameter terbaca dan ditampilkan pada HMI. \\
@@ -239,13 +234,91 @@ No. & Fungsi yang diuji & Kriteria keberhasilan & Hasil yang dilaporkan \\
 \end{longtblr}
 
 \Needspace{7cm}
-\GambarLaporan{assets/gambar/gambar-4-13.png}{Implementasi perangkat monitoring pada mesin cutting}{fig:draft-3-13}{}
+\begin{figure}[H]
+  \centering
+  \includegraphics[height=5.9cm]{assets/gambar/cutting-implementation-exterior.png}
+  \hspace{0.55cm}
+  \includegraphics[height=5.9cm]{assets/gambar/cutting-implementation-interior-ai-edit.png}
+  \caption{Implementasi perangkat monitoring pada mesin cutting}
+  \label{fig:draft-3-13}
+\end{figure}
 
-\GambarLaporan{assets/gambar/gambar-4-14.png}{Implementasi perangkat monitoring pada mesin cutting}{fig:draft-3-14}{}
+\begingroup
+\setlength{\BatasTinggiGambar}{4.3cm}
+\GambarLaporan{assets/gambar/cutting-hmi-installed.png}{Implementasi HMI pada mesin cutting}{fig:draft-3-14}{}
+\endgroup
 
-\GambarLaporan{assets/gambar/gambar-4-15.png}{Tampilan HMI sistem monitoring mesin cutting}{fig:draft-3-15}{}
+\begingroup
+% Pertahankan paragraf penjelas dan gambar dalam satu blok
+% yang dapat dipindahkan sesuai tinggi sebenarnya.
+\raggedbottom
+\edef\IndentCuplikan{\the\parindent}
+\newcommand{\CuplikanAntarmuka}[6][0bp 0bp 0bp 0bp]{%
+  \par\addvspace{5pt}\nointerlineskip
+  \hbox{\begin{minipage}[t]{\linewidth}
+    \setlength{\parindent}{\IndentCuplikan}%
+    \indent #6\par\nobreak\smallskip
+    \centering
+    \captionsetup{type=figure,skip=6pt}%
+    \includegraphics[trim={#1},clip,width=.95\linewidth,height=#2,keepaspectratio]{#3}\par
+    \caption{#4}\label{#5}%
+  \end{minipage}}\par
+}
 
-\GambarLaporan{assets/gambar/gambar-4-16.png}{Tampilan dashboard server sistem monitoring mesin cutting}{fig:draft-3-16}{}
+\Needspace{8.5cm}
+\subsubsection{Tampilan dan Fungsi HMI}
+
+\CuplikanAntarmuka{7.2cm}{assets/gambar/cutting-hmi-monitoring.png}
+  {Pemantauan sensor dan grafik pada HMI}{fig:draft-3-15}
+  {Gambar~\ref{fig:draft-3-14} menunjukkan HMI yang terpasang pada mesin. Tangkapan layar aplikasi menggunakan data simulasi. Pada Gambar~\ref{fig:draft-3-15}, operator dapat memilih rentang waktu untuk melihat perubahan suhu, arus, tekanan, dan aliran udara.}
+
+\CuplikanAntarmuka[0bp 236bp 0bp 0bp]{4.6cm}{assets/gambar/cutting-hmi-alarm.png}
+  {Tab riwayat alarm pada HMI}{fig:cutting-hmi-alarm}
+  {Tab riwayat alarm pada Gambar~\ref{fig:cutting-hmi-alarm} mencatat waktu dan jenis kejadian. Operator dapat menyaring catatan untuk menelusuri kapan alarm muncul, kembali normal, atau ditangani.}
+
+\CuplikanAntarmuka{7.2cm}{assets/gambar/cutting-hmi-setting.png}
+  {Tab pengaturan identitas mesin dan batas alarm pada HMI}{fig:cutting-hmi-setting}
+  {Tab pengaturan pada Gambar~\ref{fig:cutting-hmi-setting} memuat identitas mesin dan batas alarm untuk tiap parameter. Tab ini juga menyediakan pengujian alarm dan pengelolaan kartu RFID teknisi.}
+
+\Needspace{8.5cm}
+\subsubsection{Tampilan dan Fungsi Dashboard Server}
+
+\CuplikanAntarmuka{4.7cm}{assets/gambar/cutting-web-ringkasan.png}
+  {Halaman ringkasan dashboard server mesin cutting}{fig:draft-3-16}
+  {Halaman ringkasan pada Gambar~\ref{fig:draft-3-16} menampilkan jumlah mesin, status koneksi, dan jumlah alarm aktif. Kartu mesin menunjukkan nilai sensor terakhir untuk membantu pengguna menentukan mesin yang perlu diperiksa lebih lanjut.}
+
+\CuplikanAntarmuka[0bp 365bp 0bp 0bp]{5.5cm}{assets/gambar/cutting-web-monitoring.png}
+  {Nilai sensor, pilihan rentang waktu, dan grafik dashboard server}{fig:cutting-web-monitoring}
+  {Halaman pemantauan pada Gambar~\ref{fig:cutting-web-monitoring} menampilkan nilai terbaru beserta kualitas data dan grafik pengukuran. Pilihan rentang waktu digunakan untuk menelusuri histori. Tombol \textit{Unduh Excel} mengekspor data pada rentang yang dipilih.}
+
+\CuplikanAntarmuka{6.3cm}{assets/gambar/cutting-web-siklus.png}
+  {Grafik dan riwayat aliran udara per siklus}{fig:cutting-web-siklus}
+  {Bagian aliran udara pada Gambar~\ref{fig:cutting-web-siklus} merangkum hasil tiap siklus. Grafik dan tabel memperlihatkan nilai terendah positif dan tertinggi dalam L/min. Tabel juga menampilkan waktu selesai dan durasi siklus.}
+
+\CuplikanAntarmuka{5.8cm}{assets/gambar/cutting-web-alarm.png}
+  {Daftar alarm pada dashboard server}{fig:cutting-web-alarm}
+  {Gambar~\ref{fig:cutting-web-alarm} menampilkan daftar kejadian dan filter untuk menemukan alarm yang masih aktif.}
+
+\CuplikanAntarmuka{5.3cm}{assets/gambar/cutting-web-rfid.png}
+  {Pendaftaran kartu RFID pada dashboard server}{fig:cutting-web-rfid}
+  {Gambar~\ref{fig:cutting-web-rfid} menampilkan daftar kartu per mesin. Formulir pendaftaran mengirim permintaan ke Raspberry Pi untuk diproses.}
+
+\CuplikanAntarmuka{6.1cm}{assets/gambar/cutting-web-batas.png}
+  {Pengaturan batas alarm sensor pada dashboard server}{fig:cutting-web-batas}
+  {Halaman pengaturan pada Gambar~\ref{fig:cutting-web-batas} menampilkan batas alarm yang berlaku serta kolom untuk mengubah batas bawah dan batas atas. Jika fitur pengaturan jarak jauh diaktifkan, perubahan dikirim ke HMI untuk diterapkan dan dikonfirmasi.}
+
+\CuplikanAntarmuka{5.2cm}{assets/gambar/cutting-web-modul.png}
+  {Pemeriksaan konfigurasi modul Waveshare}{fig:cutting-web-modul}
+  {Menu \textit{Modul \& Sensor} digunakan untuk memeriksa konfigurasi Waveshare per mesin. Tombol \textit{Baca dari Pi} meminta ID modul dan mode masukan tiap kanal. Gambar~\ref{fig:cutting-web-modul} memperlihatkan contoh hasil pembacaan dengan data simulasi.}
+
+\CuplikanAntarmuka{5cm}{assets/gambar/cutting-web-kanal.png}
+  {Pengaturan kanal dan parameter sensor}{fig:cutting-web-kanal}
+  {Gambar~\ref{fig:cutting-web-kanal} menunjukkan draf pengaturan sensor, rentang sinyal dan nilai ukur, offset kalibrasi, serta batas alarm. Pilih mode masukan sesuai sinyal sensor dan posisi jumper pada modul.}
+
+\CuplikanAntarmuka{5cm}{assets/gambar/cutting-web-penerapan.png}
+  {Penerapan konfigurasi modul dan sensor}{fig:cutting-web-penerapan}
+  {Halaman pada Gambar~\ref{fig:cutting-web-penerapan} memisahkan tindakan untuk mengubah ID modul, mode masukan kanal, dan pengaturan sensor. Draf disimpan di server terlebih dahulu. Setelah pengguna memilih tindakan penerapan, dashboard menunggu konfirmasi dari Raspberry Pi.}
+\endgroup
 
 % ============================================================
 % 4.2 SISTEM MONITORING PANEL LISTRIK
@@ -274,7 +347,7 @@ Supaya data antar-panel tidak tertukar, program membedakan tiga identitas: \text
 
 Perangkat keras pada satu node di Power Room terdiri atas unit pengolah, alat ukur, antarmuka komunikasi, rangkaian daya, dan perangkat peringatan sesuai arsitektur pada Gambar~\ref{fig:panel-arsitektur}.
 
-\Needspace{6cm}
+\Needspace{3cm}
 \subsubsection{Raspberry Pi}
 
 Unit pengolah utama menggunakan Raspberry Pi 5 seperti pada Subbab~\ref{sec:raspberry-pi} (Gambar~\ref{fig:panel-unit}). Di sistem panel, Raspberry Pi membaca PM2120 dan THM30MD, mengecek batas alarm, membaca kartu RFID lewat jalur D0/D1, mengendalikan buzzer serta LED reader, lalu mengirim data lewat MQTT.
@@ -285,7 +358,7 @@ Unit pengolah utama menggunakan Raspberry Pi 5 seperti pada Subbab~\ref{sec:rasp
 \GambarLaporan{assets/gambar/gambar-4-02.png}{Raspberry Pi 5}{fig:panel-unit}{}
 \endgroup
 
-\Needspace{6cm}
+\Needspace{3cm}
 \subsubsection{Meter Schneider Electric PM2120}
 
 PM2120 (seri EasyLogic PM2100 \citep{schneiderpm2100}) mengukur tegangan, arus, frekuensi, daya aktif, faktor daya, dan energi panel. Data diambil dari register meter melalui Modbus RTU, lalu dipasangkan ke \textit{panel ID} berdasarkan slave ID masing-masing meter (Gambar~\ref{fig:panel-pm2120}).
@@ -296,18 +369,18 @@ PM2120 (seri EasyLogic PM2100 \citep{schneiderpm2100}) mengukur tegangan, arus, 
 \GambarLaporan{assets/gambar/panel-02-pm2120.jpg}{Meter Schneider Electric PM2120}{fig:panel-pm2120}{}
 \endgroup
 
-\Needspace{6cm}
+\Needspace{3cm}
 \subsubsection{Sensor Suhu dan Kelembaban THM30MD}
 
 THM30MD memantau suhu dan kelembaban di dalam panel lewat Modbus RTU (Gambar~\ref{fig:panel-thm30md}). Program membaca empat register mulai alamat heksadesimal 02, lalu menggabungkan tiap dua register menjadi dua bilangan pecahan 32 bit.
 
 % Dokumentasi yang diperlukan: Foto sensor dan posisi pemasangannya di panel.
 \begingroup
-\setlength{\BatasTinggiGambar}{4.5cm}
+\setlength{\BatasTinggiGambar}{3.6cm}
 \GambarLaporan{assets/gambar/panel-03-thm30md.jpg}{Sensor suhu dan kelembaban THM30MD}{fig:panel-thm30md}{}
 \endgroup
 
-\Needspace{6cm}
+\Needspace{3cm}
 \subsubsection{Modul XY-017 Berbasis MAX3485}
 
 Komunikasi antara UART Raspberry Pi dan bus RS485 menggunakan modul XY-017 berbasis IC MAX3485 \citep{max3485} (Gambar~\ref{fig:panel-max3485}). Modul ini meneruskan permintaan dan balasan Modbus RTU ke PM2120 dan THM30MD sesuai slave ID yang dituju.
@@ -318,7 +391,7 @@ Komunikasi antara UART Raspberry Pi dan bus RS485 menggunakan modul XY-017 berba
 \GambarLaporan{assets/gambar/panel-15-max3485.jpg}{Modul XY-017 berbasis MAX3485}{fig:panel-max3485}{}
 \endgroup
 
-\Needspace{4cm}
+\Needspace{3cm}
 \subsubsection{Pembaca RFID Wiegand dengan Buzzer dan LED Terintegrasi}
 
 RFID reader pada sistem panel menggunakan antarmuka Wiegand lewat jalur pulsa D0 dan D1 (Gambar~\ref{fig:panel-rfid-alarm}). Program menyusun pulsa tersebut menjadi nomor kartu lalu mencocokkannya dengan daftar kartu di node.
@@ -333,7 +406,7 @@ Buzzer dan LED sudah menyatu di dalam bodi reader dengan suplai 12 V dari rangka
   \caption{Pembaca RFID Wiegand dengan buzzer dan LED terintegrasi}\label{fig:panel-rfid-alarm}
 \end{figure}
 
-\Needspace{5cm}
+\Needspace{3cm}
 \subsubsection{Rangkaian Catu Daya}
 
 Catu daya utama node memakai power supply 24 VDC yang diturunkan lewat modul step-down XL4015 menjadi 5 V untuk Raspberry Pi dan 12 V untuk RFID reader beserta buzzer dan LED bawaannya (Gambar~\ref{fig:panel-adaptor-12v}). Jalur daya ini terpisah dari jalur sinyal D0/D1 dan dilengkapi sekring serta kapasitor pada skematik (Gambar~\ref{fig:panel-skematik}).
@@ -358,10 +431,24 @@ Catu daya utama node memakai power supply 24 VDC yang diturunkan lewat modul ste
 
 Skematik pada Gambar~\ref{fig:panel-skematik} membagi papan antarmuka menjadi tiga bagian: catu daya (24 V ke step-down XL4015 untuk 5 V Raspberry Pi dan 12 V RFID reader), kendali RFID (konektor reader, D0/D1, jaringan resistor, serta transistor Q1 dan Q2 tipe BC547 untuk buzzer/LED), serta komunikasi RS485 (modul XY-017/MAX3485 dan konektor ke lapangan). Tata letak komponen dan jalur tembaganya ditunjukkan pada layout PCB Gambar~\ref{fig:panel-pcb}.
 
-% Gambar pengguna terlihat pada percakapan; berkas PNG/JPG asli perlu ditempatkan pada path berikut sebelum penyisipan gambar aktual.
-\GambarLaporan{assets/gambar/panel-17-skematik.png}{Skematik rangkaian antarmuka monitoring panel}{fig:panel-skematik}{}
+\begingroup
+\setlength{\intextsep}{5pt}
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=.92\linewidth]{assets/gambar/panel-17-skematik.png}
+  \captionsetup{skip=8pt}
+  \caption{Skematik rangkaian antarmuka monitoring panel}
+  \label{fig:panel-skematik}
+\end{figure}
 
-\GambarLaporan{assets/gambar/panel-18-pcb.png}{Layout PCB rangkaian antarmuka monitoring panel}{fig:panel-pcb}{}
+\begin{figure}[H]
+  \centering
+  \includegraphics[angle=90,width=.80\linewidth]{assets/gambar/panel-18-pcb.jpg}
+  \captionsetup{skip=8pt}
+  \caption{Layout PCB rangkaian antarmuka monitoring panel}
+  \label{fig:panel-pcb}
+\end{figure}
+\endgroup
 
 \subsubsection{Jaringan Ethernet, Switch Hub, dan Komputer Server}
 
@@ -376,7 +463,7 @@ Bagian ini menjelaskan alur program pada Raspberry Pi dan server dashboard panel
 
 Tabel~\ref{tab:panel-parameter} merangkum parameter yang dibaca dan diolah oleh program dari meter PM2120 dan sensor THM30MD.
 
-\Needspace{7cm}
+\Needspace{4cm}
 \begin{longtblr}[caption={Parameter pada program monitoring panel},label={tab:panel-parameter}]{colspec={X[1.5,l] X[1.5,l] X[2,l]},rowhead=1,cells={valign=t},row{1}={font=\bfseries,bg=gray!15},colsep=3pt,rowsep=1.5pt}
 Kelompok & Besaran dan satuan & Sumber atau pengolahan \\
 Tegangan & R--S, S--T, T--R dan R--N, S--N, T--N; V & Register PM2120, disertai nilai rata-rata \\
@@ -395,7 +482,7 @@ Program di Raspberry Pi mengirim permintaan Modbus RTU melalui UART pada port se
 
 Setiap permintaan memakai fungsi Modbus 03 (\textit{read holding register}) disertai slave ID, alamat awal, jumlah register, dan CRC16. Data pecahan 32 bit disusun berurutan secara big-endian sesuai Tabel~\ref{tab:panel-register}.
 
-\Needspace{7cm}
+\Needspace{4cm}
 \begin{longtblr}[caption={Pemetaan awal register dalam program panel},label={tab:panel-register}]{colspec={X[2,l] Q[0.8,l] Q[0.8,l] X[1.4,l]},rowhead=1,cells={valign=t},row{1}={font=\bfseries,bg=gray!15},colsep=3pt}
 Blok pembacaan & Alamat awal & Jumlah register & Representasi pada program \\
 Arus PM2120 & 2999 & 12 & Pecahan 32 bit \\
@@ -442,7 +529,7 @@ Dari arah sebaliknya, server mengirim perintah konfigurasi panel, perubahan bata
 
 Raspberry Pi membandingkan data pengukuran dengan batas pada Tabel~\ref{tab:panel-batas}. Untuk tegangan, program mengutamakan fasa--netral jika tersedia, dan beralih ke antar-fasa jika tidak ada. Pemeriksaan aktif apabila nilai batas bernilai positif.
 
-\Needspace{8cm}
+\Needspace{4cm}
 \begin{longtblr}[caption={Batas parameter awal panel},label={tab:panel-batas}]{colspec={X[2,l] X[1.3,l] X[1.7,l]},rowhead=1,cells={valign=t},row{1}={font=\bfseries,bg=gray!15},colsep=3pt}
 Parameter & Nilai konfigurasi & Keterangan \\
 Tegangan fasa--netral & 198--242 V & Batas bawah dan atas \\
@@ -471,7 +558,12 @@ Aplikasi dashboard panel berbasis Django berjalan terpisah dari dashboard cuttin
 Dashboard menyediakan halaman utama (Gambar~\ref{fig:panel-dashboard}), detail parameter dan grafik Chart.js per panel (Gambar~\ref{fig:panel-detail}), histori pengukuran (Gambar~\ref{fig:panel-history}), daftar alarm dan acknowledgement (Gambar~\ref{fig:panel-alarms}), serta pengaturan panel dan batas alarm (Gambar~\ref{fig:panel-management}).
 
 % Dokumentasi yang diperlukan: Tangkapan layar ringkasan empat panel, status koneksi, dan parameter utama.
-\GambarLaporan{assets/gambar/panel-07-dashboard.jpg}{Halaman utama dashboard monitoring panel}{fig:panel-dashboard}{}
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.95\linewidth,height=4.0cm,keepaspectratio]{assets/gambar/panel-07-dashboard.jpg}
+  \caption{Halaman utama dashboard monitoring panel}
+  \label{fig:panel-dashboard}
+\end{figure}
 
 % Dokumentasi yang diperlukan: Tangkapan layar detail salah satu panel dengan nilai serta grafik yang terbaca.
 \GambarLaporan{assets/gambar/panel-08-detail.png}{Halaman detail panel dan grafik parameter pengukuran}{fig:panel-detail}{}
@@ -496,7 +588,12 @@ Di antarmuka web, rekap tersebut ditampilkan pada halaman \textit{Summary} (Gamb
 % Tangkapan layar halaman Summary dan Detail Summary panel.
 \GambarLaporan{assets/gambar/panel-12-summary.jpg}{Halaman Summary dan indeks status parameter panel}{fig:panel-statistics}{}
 
-\GambarLaporan{assets/gambar/panel-12b-summary-detail.png}{Halaman detail Summary tren harian dan konsumsi energi panel}{fig:panel-summary-detail}{}
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.95\linewidth,height=4.0cm,keepaspectratio]{assets/gambar/panel-12b-summary-detail.png}
+  \caption{Halaman detail Summary tren harian dan konsumsi energi panel}
+  \label{fig:panel-summary-detail}
+\end{figure}
 
 % Dokumentasi yang diperlukan: Tangkapan layar contoh berkas ekspor yang sudah terbentuk, dengan judul kolom dan satuan terbaca.
 \GambarLaporan{assets/gambar/panel-13-export.jpg}{Hasil ekspor data pengukuran panel dalam format XLSX atau CSV}{fig:panel-export}{}
@@ -505,7 +602,7 @@ Di antarmuka web, rekap tersebut ditampilkan pada halaman \textit{Summary} (Gamb
 
 Sistem monitoring panel sudah dipasang pada satu Raspberry Pi untuk empat panel di Power Room menggunakan modul MAX3485 pada bus RS485, sebagaimana dirangkum pada Tabel~\ref{tab:panel-evaluasi} dan Gambar~\ref{fig:panel-power-room}. Pada pengujian langsung di Power Room, hasil pembacaan yang ditampilkan sudah sesuai dengan alat ukur di panel dan tidak ditemukan kendala teknis pada pemasangan; hanya saja akses ke area panel harus didampingi teknisi sehingga waktu pengerjaan dan pengujian di lapangan tidak dapat dilakukan secara fleksibel.
 
-\Needspace{9.5cm}
+\Needspace{4cm}
 \begin{longtblr}[caption={Cakupan evaluasi sistem monitoring panel},label={tab:panel-evaluasi}]{colspec={X[1.4,l] X[1.8,l] X[1.8,l]},rowhead=1,cells={valign=t},row{1}={font=\bfseries,bg=gray!15},colsep=3pt}
 Aspek & Dasar evaluasi & Uraian \\
 Pemasangan & Penerapan di Power Room & Satu Raspberry Pi melayani empat panel melalui modul MAX3485 pada bus RS485 \\
@@ -519,8 +616,13 @@ Dari penelusuran kode node dan server, masih ada beberapa bagian yang perlu dise
 
 Di sisi autentikasi dan ketahanan data, alur server masih memproses konfirmasi alarm tanpa menghentikan kartu yang tidak terdaftar, berbeda dari pemeriksaan di node. Terdapat pula perbedaan batas faktor daya leading antara konfigurasi node (0,90) dengan nilai bawaan server (0,95). Selain itu, node belum memiliki antrean lokal sehingga sampel saat koneksi MQTT terputus belum tersimpan untuk dikirim ulang.
 
-% Dokumentasi yang diperlukan: Foto kondisi aktual satu blok empat panel dan lokasi unit monitoring; dapat berupa gabungan foto area dan detail pemasangan.
-\GambarLaporan{assets/gambar/panel-14-power-room.png}{Pemasangan node monitoring untuk empat panel di Power Room}{fig:panel-power-room}{}
+\begin{figure}[H]
+  \centering
+  \includegraphics[trim={160bp 580bp 160bp 410bp},clip,height=5.2cm]{assets/gambar/panel-14-power-room.jpg}\hspace{0.35cm}%
+  \includegraphics[trim={230bp 620bp 108bp 325bp},clip,height=5.2cm]{assets/gambar/panel-14-power-room-interior.jpg}
+  \caption{Implementasi perangkat monitoring pada panel yang berada di power room}
+  \label{fig:panel-power-room}
+\end{figure}
 
 % ============================================================
 % 4.3 PENYUSUNAN LAPORAN HASIL PEKERJAAN
@@ -535,7 +637,6 @@ Dokumentasi mencatat sambungan perangkat, fungsi aplikasi, pengolahan data, alar
 Laporan menyajikan rancangan, pelaksanaan, dan evaluasi kedua proyek beserta pembagian kontribusi penulis. Pembahasan perangkat, aplikasi, dan pengolahan data menjadi bagian dokumentasi teknis untuk pemeliharaan sistem. Uraian laporan menghubungkan konfigurasi perangkat, alur komunikasi, tampilan antarmuka, dan pembagian tugas pada kedua proyek.
 
 % DOCX block 578
-\Needspace{8.5cm}
 \section{Kontribusi}
 
 % DOCX block 579
@@ -554,6 +655,8 @@ Muhammad Fadhil Abdillah (2124500053) & Pengembangan monitoring panel listrik: p
 
 Pengembangan monitoring cutting dan panel menerapkan materi pengukuran, rangkaian, pemrograman, antarmuka, pengolahan data, dan keselamatan yang dipelajari pada Program Studi D3 Teknik Elektronika.
 
+\begingroup
+\titlespacing*{\subsection}{0pt}{4pt}{2pt}
 \subsection{Pengukuran Listrik dan Instrumentasi}
 
 Konsep pada Pengukuran Listrik dan Instrumentasi serta Praktikum Pengukuran Listrik digunakan untuk mengenali sinyal keluaran sensor. Sinyal tersebut berupa resistansi PT100, arus 4--20 mA, serta tegangan 0--5 V dan 1--5 V. Pada panel, PM2120 dan THM30MD menyediakan data tegangan, daya, energi, suhu, dan kelembaban. Rentang serta satuannya perlu dipahami. Resolusi atau perubahan nilai terkecil yang dapat dibaca tidak sama dengan akurasi pengukuran.
@@ -593,3 +696,4 @@ Materi Pengolahan Sinyal dan praktikumnya digunakan untuk mengolah sampel terhad
 \subsection{K3L dan Standar Internasional}
 
 Materi K3L dan Standar Internasional diterapkan pada penanganan catu daya, pengawatan, penggunaan APD, dan koordinasi pekerjaan agar produksi tetap berjalan. Evaluasi sertifikasi sistem berada di luar cakupan pekerjaan.
+\endgroup

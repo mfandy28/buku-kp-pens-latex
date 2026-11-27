@@ -1,17 +1,21 @@
 \begin{figure}[H]
 \centering
 \begin{tikzpicture}[
-  box/.style={draw,rounded corners=1mm,align=center,font=\scriptsize,
-    text width=24mm,minimum height=15mm,inner sep=2mm},
-  link/.style={->,thick}
+  font=\rmfamily\fontsize{7.5}{9}\selectfont,
+  stage/.style={draw=blue!45!black,rounded corners=2pt,align=center,
+    fill=blue!3,inner sep=4pt,text width=6.9cm,minimum height=0.92cm},
+  link/.style={<->,thick,draw=blue!45!black},
+  tag/.style={font=\rmfamily\fontsize{7}{8}\selectfont,fill=white,inner sep=1.5pt}
 ]
-\node[box] (pi) at (0,0) {Mesin cutting\\Raspberry Pi\\HMI dan data lokal};
-\node[box] (pc) at (3.25,0) {PC mesin cutting\\Broker lokal\\Sinkronisasi data};
-\node[box] (server) at (6.5,0) {Server perusahaan\\Dashboard global\\Histori dan alarm};
-\draw[link] (pi) -- (pc);
-\draw[link] (pc) -- (server);
+\node[stage,fill=blue!65!black,text=white] (pi) at (0,0)
+  {\textbf{Mesin cutting}\\Raspberry Pi, HMI, dan penyimpanan lokal};
+\node[stage] (pc) at (0,-1.8)
+  {\textbf{PC mesin cutting}\\Broker MQTT lokal dan sinkronisasi data};
+\node[stage] (server) at (0,-3.6)
+  {\textbf{Server perusahaan}\\Dashboard global, histori, dan alarm};
+\draw[link] (pi) -- node[right,tag]{Data dan konfirmasi MQTT} (pc);
+\draw[link] (pc) -- node[right,tag]{Data dan konfirmasi MQTT} (server);
 \end{tikzpicture}
 \caption{Blok diagram dashboard global}
 \label{fig:draft-3-12}
-
 \end{figure}

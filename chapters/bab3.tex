@@ -1,6 +1,6 @@
 \chapter{LANDASAN TEORI}
 
-Landasan teori pada bab ini menjelaskan konsep pengukuran parameter, komunikasi perangkat, pengolahan pada unit lapangan, penyimpanan data, pemantauan terpusat, serta mekanisme peringatan. Pembahasan memadukan kebutuhan sistem monitoring mesin cutting dan panel listrik pada bagian yang sama, lalu membedakan subbabnya pada aspek yang berbeda. Konfigurasi detail dan hasil penerapannya dibahas pada Bab IV.
+Sistem monitoring mesin cutting dan panel listrik mengubah hasil pengukuran menjadi data yang dapat ditampilkan dan disimpan. Bab ini membahas cara perangkat membaca, mengirim, dan mengolah data tersebut, termasuk pemeriksaan batas alarm.
 
 \section{Sistem Monitoring dan IIoT}
 
@@ -44,9 +44,9 @@ Karena satu node Raspberry Pi melayani beberapa panel sekaligus dan setiap panel
 
 Kedua sistem memakai Raspberry Pi sebagai unit komputasi lapangan \citep{raspberrypi}. Perangkat ini menjalankan akuisisi sensor atau meter, pengolahan parameter, pengecekan batas alarm, serta komunikasi dengan server. Pemisahan kode menjadi modul pembacaan, logika alarm, dan pengiriman jaringan memudahkan penelusuran ketika terjadi gangguan pada salah satu bagian.
 
-\subsection{Antarmuka HMI Lokal pada Mesin Cutting}
+\subsection{Antarmuka HMI pada Mesin Cutting}
 
-Pada mesin cutting, Raspberry Pi dilengkapi \textit{Human--Machine Interface} (HMI) lokal yang ditampilkan pada Touch Display 7 inci \citep{touchdisplay}. Aplikasi HMI dibangun menggunakan bahasa Python dengan pustaka PyQt \citep{pyqt} agar operator di dekat mesin dapat melihat nilai pengukuran terkini, grafik, status perangkat, pengaturan, dan peringatan secara langsung.
+Pada mesin cutting, Raspberry Pi dilengkapi \textit{Human--Machine Interface} (HMI) yang ditampilkan pada Touch Display 7 inci \citep{touchdisplay}. Aplikasi HMI dibangun menggunakan bahasa Python dengan pustaka PyQt \citep{pyqt} agar operator di dekat mesin dapat melihat nilai pengukuran terkini, grafik, status perangkat, pengaturan, dan peringatan secara langsung.
 
 \subsection{Operasi Tanpa Layar dan Indikator Node pada Panel Listrik}
 

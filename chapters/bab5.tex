@@ -8,8 +8,6 @@
 \section{Kesimpulan}
 
 % DOCX block 602
-Berdasarkan pelaksanaan kerja praktik di Divisi Maintenance PT XYZ, diperoleh kesimpulan sebagai berikut.
-
 % DOCX block 603
 \begin{enumerate}[leftmargin=*,itemsep=2pt]
 \item Sistem monitoring mesin cutting telah diimplementasikan dengan Raspberry Pi sebagai unit pemrosesan. Pembacaan suhu motor, arus tiga fasa, tekanan udara, dan laju aliran udara dilakukan melalui RS485/Modbus RTU sesuai konfigurasi perangkat pada masing-masing mesin.
@@ -21,7 +19,7 @@ Berdasarkan pelaksanaan kerja praktik di Divisi Maintenance PT XYZ, diperoleh ke
 \item Komunikasi MQTT mengintegrasikan data pada sisi mesin dengan dashboard server berbasis Django untuk pemantauan terpusat dan penelusuran riwayat.
 
 % DOCX block 606
-\item Evaluasi fungsi cutting mencakup pembacaan sensor, penyajian HMI, penyimpanan riwayat, alarm dan RFID, komunikasi MQTT, serta dashboard server. Hasil pekerjaan menghubungkan fungsi-fungsi tersebut dalam satu alur pemantauan mesin.
+\item Evaluasi fungsional pada mesin cutting mencakup pembacaan sensor, tampilan HMI, penyimpanan riwayat, alarm dan RFID, pengiriman MQTT, serta penerimaan data di dashboard server.
 
 \item Sistem monitoring panel sudah dipasang pada satu Raspberry Pi untuk empat panel di Power Room menggunakan modul MAX3485 pada bus RS485. Aplikasi membaca meter PM2120 dan sensor THM30MD, memeriksa batas alarm di node, menerima kartu RFID Wiegand beserta kendali buzzer dan LED bawaan, serta mengirim data ke dashboard Django lewat MQTT.
 
@@ -51,7 +49,7 @@ Pemetaan kanal, pengaturan sensor, alur jaringan, serta perubahan program perlu 
 
 Sebelum sistem diperluas ke blok lain, perintah MQTT dari server perlu ditujukan ke masing-masing node agar tidak memicu node lain lewat topik broadcast. Nama data ketidakseimbangan tegangan juga harus disamakan dengan pemeriksaan alarm, begitu pula batas faktor daya dan pengecekan kartu RFID antara node dan server. Kegagalan baca sensor sebaiknya diberi penanda khusus agar tidak tersimpan sebagai nol atau nilai perkiraan. Selain itu, node perlu diberi antrean penyimpanan lokal agar data tidak hilang saat jaringan terputus.
 
-Selain penyempurnaan perangkat lunak tersebut, perusahaan disarankan terus membuka ruang riset dan uji coba terukur terhadap pemilihan perangkat lapangan yang lebih proporsional sesuai beban kerjanya. Untuk tugas yang berfokus pada pembacaan data serial lalu pengiriman ke server, penyesuaian spesifikasi perangkat dengan kebutuhan diharapkan dapat menghasilkan sistem yang lebih hemat, efisien, dan tepat guna tanpa mengabaikan aspek keamanannya.
+Untuk unit yang hanya membaca data serial dan mengirimkannya ke server, perusahaan dapat menguji perangkat dengan spesifikasi lebih sederhana. Bandingkan biaya dan kemampuan perangkat dalam menjalankan fungsi tersebut sambil tetap mengikuti ketentuan keamanan perusahaan.
 
 % DOCX block 613
 \subsubsection{Pengembangan kerja sama dengan institusi pendidikan}

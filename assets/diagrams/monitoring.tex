@@ -1,52 +1,53 @@
-% Penyajian vektor dari hubungan fungsi pada diagram pengguna.
-% Foto diagram asal dipertahankan; detail terminal pengawatan tidak ditafsirkan.
-\begin{figure}[tbp]
+\begin{figure}[H]
 \centering
 \begin{tikzpicture}[
- font=\rmfamily\fontsize{8}{9.5}\selectfont,
- block/.style={draw=blue!45!black,rounded corners=2pt,align=center,
- fill=blue!3,inner sep=5pt,text width=3.9cm},
- small/.style={block,text width=2cm},
- link/.style={->,thick,draw=blue!45!black}]
-\node[block,fill=blue!70!black,text=white,text width=9.1cm,
- font=\rmfamily\bfseries\fontsize{9}{11}\selectfont] at (0,1.4)
- {Sistem Monitoring Mesin Cutting};
-\node[block,minimum height=1.5cm] (temp) at (-2.45,0)
- {\textbf{Pengukuran suhu}\\PT100 (RTD)\\Keluaran: perubahan resistansi};
-\node[block,minimum height=1.5cm] (analog) at (2.45,0)
- {\textbf{Arus, tekanan, dan aliran}\\Tiga transduser R/S/T: 4--20 mA atau 0--5 V\\SMC ISE30A-01-D: 4--20 mA\\SMC PFMB7202-06-C: 1--5 V};
-\node[block,minimum height=.75cm] (rtd) at (-2.45,-1.7)
- {Konverter RTD--RS485\\\textbf{Slave ID 1}};
-\node[block,minimum height=.75cm] (wave) at (2.45,-1.7)
- {Waveshare Modbus RTU\\Analog Input 8CH -- \textbf{Slave ID 2}};
-\draw[link] (temp) -- (rtd);
-\draw[link] (analog) -- (wave);
-\draw[thick,blue!45!black] (rtd.south) -- (-2.45,-2.6) --
- (2.45,-2.6) -- (wave.south);
-\node[fill=white,inner sep=2pt] at (0,-2.6)
- {Satu bus RS485 / Modbus RTU};
-\node[block] (usb) at (0,-3.65)
- {\textbf{Satu konverter Waveshare USB--RS485}\\Antarmuka bersama kedua perangkat};
-\draw[link] (0,-2.72) -- (usb.north);
-\node[small,minimum height=.8cm] (pi) at (0,-5.45)
- {\textbf{Raspberry Pi 5}\\Pengolahan dan histori};
-\draw[link] (usb) -- node[right]{USB} (pi);
-\node[small] (rfid) at (-3.5,-5.45)
- {Pembaca RFID\\Identitas teknisi};
-\draw[link] (rfid) -- node[above]{USB} (pi);
-\node[small] (relay) at (3.5,-5.45)
- {Relay 1 kanal\\Kendali buzzer};
-\draw[link] (pi) -- node[above]{GPIO} (relay);
-\node[small] (hmi) at (0,-7.2)
- {\textbf{HMI}\\Touch Display 7 inci};
-\draw[link] (pi) -- node[right]{DSI} (hmi);
-\node[small] (buzz) at (3.5,-7.2)
- {Buzzer 24 VDC\\Peringatan suara};
+  font=\rmfamily\fontsize{7.5}{9}\selectfont,
+  bloc/.style={draw=blue!45!black,rounded corners=2pt,align=center,
+    fill=blue!3,inner sep=3.5pt,text width=4.15cm},
+  banner/.style={bloc,fill=blue!65!black,text=white,text width=9.05cm},
+  sensor/.style={bloc,text width=1.95cm,inner xsep=2.4pt,minimum height=1.56cm},
+  converter/.style={bloc,minimum height=0.88cm},
+  device/.style={bloc,text width=2.27cm,minimum height=1cm},
+  link/.style={->,thick,draw=blue!45!black},
+  bus/.style={thick,draw=blue!55!black},
+  tag/.style={font=\rmfamily\fontsize{7}{8}\selectfont,fill=white,inner sep=1.5pt}
+]
+\node[banner] at (0,0) {\textbf{Sistem Monitoring Mesin Cutting}};
+\node[sensor] (suhu) at (-3.45,-1.24)
+  {\textbf{Suhu motor}\\PT100 (RTD)\\Perubahan resistansi};
+\node[sensor] (arus) at (-1.15,-1.24)
+  {\textbf{Arus tiga fasa}\\Transduser R/S/T\\4--20 mA atau 0--5 V};
+\node[sensor] (tekanan) at (1.15,-1.24)
+  {\textbf{Tekanan udara}\\ISE30A-01-D\\4--20 mA};
+\node[sensor] (aliran) at (3.45,-1.24)
+  {\textbf{Aliran udara}\\PFMB7202-06-C\\1--5 V};
+\node[converter,text width=1.95cm,inner xsep=2.4pt] (rtd) at (-3.45,-2.65)
+  {\textbf{RTD--RS485}\\\textit{Slave ID} 1};
+\node[converter,text width=6.36cm] (analog) at (1.15,-2.65)
+  {\textbf{Waveshare Analog Input 8CH}\\\textit{Slave ID} 2};
+\draw[link] (suhu) -- (rtd);
+\foreach \inputnode in {arus,tekanan,aliran}
+  \draw[link] (\inputnode.south) -- (\inputnode.south |- analog.north);
+\draw[bus] (rtd.south) |- (0,-3.43) -| (analog.south);
+
+\node[bloc,text width=4.95cm] (adapter) at (0,-4.32)
+  {\textbf{Satu konverter Waveshare USB--RS485}};
+\draw[bus] (0,-3.43) -- (adapter.north);
+\fill[blue!55!black] (0,-3.43) circle (1.2pt);
+\node[tag,right,text=blue!55!black] at (0.12,-3.72)
+  {Bus bersama RS485 / Modbus RTU};
+\node[device] (pi) at (0,-5.53) {\textbf{Raspberry Pi}\\Pengolahan dan histori};
+\draw[link,<->] (adapter) -- node[right,tag]{USB} (pi);
+\node[device] (rfid) at (-3.36,-5.53) {\textbf{Pembaca RFID}\\Identitas teknisi};
+\node[device] (relay) at (3.36,-5.53) {\textbf{Modul relay}\\Kendali buzzer};
+\draw[link] (rfid) -- node[above,tag]{USB} (pi);
+\draw[link] (pi) -- node[above,tag]{GPIO} (relay);
+\node[device] (hmi) at (0,-6.96) {\textbf{HMI}\\Touch Display 7 inci};
+\node[device] (buzz) at (3.36,-6.96) {\textbf{Buzzer 24 VDC}\\Peringatan suara};
+\draw[link] (pi) -- node[right,tag]{DSI} (hmi);
 \draw[link] (relay) -- (buzz);
-\node[block,text width=9.1cm,fill=gray!8] at (0,-8.9)
- {\textbf{Catu daya}\\5 VDC khusus Raspberry Pi 5;
- 24 VDC untuk perangkat pengukuran dan buzzer.\\
- Diagram menunjukkan hubungan fungsi, bukan detail terminal pengawatan.};
+\node[banner,fill=blue!3,text=black] at (0,-8.04)
+  {\textbf{Catu daya}\\5 VDC untuk Raspberry Pi dan 24 VDC untuk perangkat pengukuran serta buzzer};
 \end{tikzpicture}
 \caption{Blok diagram sistem monitoring mesin cutting}
 \label{fig:draft-3-1}
